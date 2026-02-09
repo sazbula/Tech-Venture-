@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 213 63% 7.5%;
+    --foreground: 217 100% 96%;
+
+    --card: 210 56% 11%;
+    --card-foreground: 217 100% 96%;
+
+    --popover: 210 56% 11%;
+    --popover-foreground: 217 100% 96%;
+
+    --primary: 252 100% 68%;
+    --primary-foreground: 217 100% 96%;
+
+    --secondary: 211 57% 14.5%;
+    --secondary-foreground: 217 100% 96%;
+
+    --muted: 211 50% 21%;
+    --muted-foreground: 211 30% 70%;
+
+    --accent: 252 100% 68%;
+    --accent-foreground: 217 100% 96%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 217 100% 96%;
+
+    --border: 211 40% 18%;
+    --input: 211 40% 18%;
+    --ring: 252 100% 68%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 210 56% 11%;
+    --sidebar-foreground: 217 100% 96%;
+    --sidebar-primary: 252 100% 68%;
+    --sidebar-primary-foreground: 217 100% 96%;
+    --sidebar-accent: 211 57% 14.5%;
+    --sidebar-accent-foreground: 217 100% 96%;
+    --sidebar-border: 211 40% 18%;
+    --sidebar-ring: 252 100% 68%;
+
+    /* Severity system */
+    --severity-green: 142 71% 45%;
+    --severity-yellow: 48 96% 53%;
+    --severity-orange: 25 95% 53%;
+    --severity-red: 0 84% 60%;
+    --severity-purple: 252 100% 68%;
+    --severity-gray: 211 20% 40%;
+
+    /* Custom tokens */
+    --glow-primary: 252 100% 68%;
+    --surface-elevated: 211 50% 13%;
+    --graph-bg: 213 63% 6%;
+  }
+
+  .dark {
+    /* Same as root since dark-first */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3), 0 0 60px hsl(var(--primary) / 0.1);
+  }
+
+  .glow-sm {
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.2);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[hsl(252,100%,78%)] to-[hsl(200,100%,70%)];
+  }
+
+  .surface-elevated {
+    background: hsl(var(--surface-elevated));
+  }
+
+  .graph-bg {
+    background: hsl(var(--graph-bg));
+  }
+
+  .severity-dot-green { background: hsl(var(--severity-green)); }
+  .severity-dot-yellow { background: hsl(var(--severity-yellow)); }
+  .severity-dot-orange { background: hsl(var(--severity-orange)); }
+  .severity-dot-red { background: hsl(var(--severity-red)); }
+  .severity-dot-purple { background: hsl(var(--severity-purple)); }
+  .severity-dot-gray { background: hsl(var(--severity-gray)); }
+
+  .severity-glow-green { box-shadow: 0 0 8px hsl(var(--severity-green) / 0.5); }
+  .severity-glow-yellow { box-shadow: 0 0 8px hsl(var(--severity-yellow) / 0.5); }
+  .severity-glow-orange { box-shadow: 0 0 8px hsl(var(--severity-orange) / 0.5); }
+  .severity-glow-red { box-shadow: 0 0 8px hsl(var(--severity-red) / 0.5); }
+  .severity-glow-purple { box-shadow: 0 0 8px hsl(var(--severity-purple) / 0.5); }
+}

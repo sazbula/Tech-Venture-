@@ -74,7 +74,10 @@ const Login = () => {
               variant="ghost"
               size="sm"
               className="w-full text-muted-foreground gap-2"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => {
+                localStorage.setItem("currentRepo", "contextify-demo");
+                navigate("/dashboard");
+              }}
             >
               <Eye className="w-4 h-4" />
               View demo

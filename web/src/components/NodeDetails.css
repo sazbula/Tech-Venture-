@@ -1,0 +1,131 @@
+/* NodeDetails Component Styles */
+
+.node-details {
+  width: 350px;
+  background: rgba(26, 26, 46, 0.95);
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.node-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  border-bottom: 1px solid #2a2a4a;
+  background: rgba(42, 42, 74, 0.5);
+}
+
+.node-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.node-title h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  word-break: break-all;
+}
+
+.node-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.node-badge.class {
+  background: rgba(0, 217, 255, 0.2);
+  color: #00d9ff;
+}
+
+.node-badge.function {
+  background: rgba(0, 255, 136, 0.2);
+  color: #00ff88;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #fff;
+}
+
+.node-body {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.detail-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.detail-row .label {
+  color: #666;
+  font-size: 0.85rem;
+  min-width: 50px;
+}
+
+.detail-row .value {
+  color: #ccc;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.code-section {
+  margin-top: 1rem;
+}
+
+.code-section .label {
+  display: block;
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.code-block {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.8rem;
+  color: #aaa;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.method-item {
+  padding: 0.25rem 0;
+  color: #00ff88;
+}
+
+.method-item:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.more-indicator {
+  color: #666;
+  font-style: italic;
+  margin-top: 0.5rem;
+}

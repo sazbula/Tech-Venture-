@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(python3:*)",
+      "Bash(git submodule:*)",
+      "Bash(pip install:*)",
+      "Bash(pip index:*)",
+      "Bash(pip search:*)",
+      "Bash(timeout 5 python:*)",
+      "Bash(python -c:*)",
+      "Bash(npm install:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill /F /FI \"WINDOWTITLE eq python*\")",
+      "Bash(taskkill /F /FI \"IMAGENAME eq python.exe\")",
+      "Bash(git rm:*)"
+    ]
+  }
+}

@@ -1,0 +1,108 @@
+/* GraphVisualization Component Styles */
+
+.graph-visualization {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.graph-container {
+  flex: 1;
+  min-height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #2a2a4a;
+  background: #1a1a2e;
+}
+
+.graph-container canvas {
+  display: block;
+}
+
+.graph-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #666;
+  border: 1px dashed #2a2a4a;
+  border-radius: 8px;
+}
+
+/* Legend */
+.graph-legend {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(26, 26, 46, 0.9);
+  border-radius: 6px;
+  border: 1px solid #2a2a4a;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.class {
+  background: #00d9ff;
+}
+
+.legend-dot.function {
+  background: #00ff88;
+}
+
+.legend-dot.method {
+  background: #ffd93d;
+}
+
+.legend-dot.file {
+  background: #00d9ff;
+}
+
+.legend-info {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #2a2a4a;
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* Controls */
+.graph-controls {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.graph-controls button {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  border: 1px solid #2a2a4a;
+  border-radius: 6px;
+  background: rgba(26, 26, 46, 0.9);
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.graph-controls button:hover {
+  border-color: #00d9ff;
+  color: #00d9ff;
+}

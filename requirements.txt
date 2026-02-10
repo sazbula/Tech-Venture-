@@ -1,0 +1,10 @@
+# Contextify Dependencies
+
+# Core dependencies
+requests>=2.31.0
+networkx>=3.2.1
+
+# API server
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pydantic>=2.5.0

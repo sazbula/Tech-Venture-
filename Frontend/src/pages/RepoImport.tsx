@@ -28,7 +28,7 @@ const RepoImport = () => {
   const analysisStarted = useRef(false);
   const eventSourceRef = useRef<EventSource | null>(null);
 
-  const isValidUrl = url.match(/^https?:\/\/github\.com\/.+\/.+/);
+  const isValidUrl = url.match(/^(https?:\/\/)?(www\.)?github\.com\/.+\/.+/);
 
   const loadDemoRepo = () => {
     // Load the existing demo repo directly without analyzing
@@ -117,10 +117,13 @@ const RepoImport = () => {
             setProgress(50);
             setStatusText(`Graph built: ${data.nodes} nodes, ${data.edges} edges`);
 
-            // Store repo info but don't navigate yet - wait for RLM to start
+            // Navigate to dashboard immediately - graph is ready to display
             const currentRepoName = repoName || (url ? url.split('/').pop()?.replace('.git', '') : '') || '';
             localStorage.setItem("currentRepo", currentRepoName);
             localStorage.setItem("rlmInProgress", "true");
+            setTimeout(() => {
+              navigate("/dashboard");
+            }, 800);
             break;
 
           case "collecting_files":
@@ -141,14 +144,8 @@ const RepoImport = () => {
             break;
 
           case "batch_start":
-            // Navigate to dashboard once we know RLM is actually running
             setProgress(70);
             setStatusText(`Analyzing code batch ${data.batch || 1}...`);
-            
-            // Navigate after a short delay to show that RLM has started
-            setTimeout(() => {
-              navigate("/dashboard");
-            }, 800);
             break;
 
           case "batch_complete":
@@ -205,8 +202,14 @@ const RepoImport = () => {
     setStatusText("Connecting to analysis stream...");
 
     try {
+      // Normalize URL: ensure https:// prefix for the backend
+      let normalizedUrl = url.trim();
+      if (!normalizedUrl.match(/^https?:\/\//)) {
+        normalizedUrl = `https://${normalizedUrl}`;
+      }
+
       // Extract repo name for SSE
-      const urlParts = url.split('/');
+      const urlParts = normalizedUrl.split('/');
       const repoName = urlParts.pop()?.replace('.git', '') || '';
 
       // Connect to SSE first and wait for connection to establish
@@ -224,7 +227,7 @@ const RepoImport = () => {
       await new Promise(resolve => setTimeout(resolve, 200));
 
       // Call the backend API - events will now be captured
-      await analyzeRepo(url, false, true);
+      await analyzeRepo(normalizedUrl, false, true);
 
       // Navigation to dashboard happens when batch_start event fires
     } catch (err) {

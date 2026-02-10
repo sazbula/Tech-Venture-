@@ -1,53 +1,19 @@
 {
   "issues_by_file": {
-    "src/auth.py": [
+    "example.py": [
       {
-        "file": "src/auth.py",
+        "file": "example.py",
         "severity": "high",
-        "description": "Hardcoded credentials"
-      },
-      {
-        "file": "src/auth.py",
-        "severity": "high",
-        "description": "Weak hashing algorithm"
-      }
-    ],
-    "src/database.py": [
-      {
-        "file": "src/database.py",
-        "severity": "high",
-        "description": "SQL injection vulnerability"
-      }
-    ],
-    "utils/helpers.py": [
-      {
-        "file": "utils/helpers.py",
-        "severity": "high",
-        "description": "No zero division check"
-      },
-      {
-        "file": "utils/helpers.py",
-        "severity": "high",
-        "description": "No error handling"
-      },
-      {
-        "file": "utils/helpers.py",
-        "severity": "high",
-        "description": "Inefficient iteration"
-      },
-      {
-        "file": "utils/helpers.py",
-        "severity": "high",
-        "description": "No validation of inputs"
+        "description": "syntax error"
       }
     ]
   },
   "summary": {
     "total_files": 3,
-    "files_with_issues": 3,
-    "total_issues": 7,
+    "files_with_issues": 1,
+    "total_issues": 1,
     "critical_issues": 0,
-    "high_issues": 7,
+    "high_issues": 1,
     "batches_completed": 1,
     "total_batches": 1
   }

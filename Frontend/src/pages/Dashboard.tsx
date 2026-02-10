@@ -38,6 +38,15 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [rlmInProgress, setRlmInProgress] = useState(false);
 
+  // RLM progress details
+  const [rlmProgress, setRlmProgress] = useState({
+    phase: "Connecting...",
+    batch: 0,
+    totalBatches: 0,
+    issuesFound: 0,
+    percent: 0,
+  });
+
   const eventSourceRef = useRef<EventSource | null>(null);
 
   // Fetch graph data on mount
@@ -81,7 +90,7 @@ const Dashboard = () => {
         setNodes(fileNodes);
         setEdges(graphEdges);
         setError(null);
-        
+
         // After graph is loaded, connect to SSE for live RLM updates if analysis is in progress
         if (rlmStatus === "true") {
           setRlmInProgress(true);
@@ -123,50 +132,100 @@ const Dashboard = () => {
         const data = JSON.parse(event.data);
         console.log("Dashboard SSE event:", data);
 
+        // Track progress phases
+        if (data.type === "connected") {
+          setRlmProgress(prev => ({ ...prev, phase: "Connected to analysis stream" }));
+        }
+
+        if (data.type === "graph_building") {
+          setRlmProgress(prev => ({ ...prev, phase: "Building dependency graph...", percent: 10 }));
+        }
+
+        if (data.type === "graph_complete") {
+          setRlmProgress(prev => ({ ...prev, phase: "Graph built, starting analysis...", percent: 20 }));
+        }
+
+        if (data.type === "collecting_files") {
+          setRlmProgress(prev => ({ ...prev, phase: "Collecting files for analysis...", percent: 25 }));
+        }
+
+        if (data.type === "files_collected") {
+          setRlmProgress(prev => ({
+            ...prev,
+            phase: `Found ${data.file_count} files to analyze`,
+            percent: 30,
+          }));
+        }
+
+        if (data.type === "rlm_started") {
+          setRlmProgress(prev => ({ ...prev, phase: "AI analysis starting...", percent: 35 }));
+        }
+
+        if (data.type === "batch_start") {
+          setRlmProgress(prev => ({
+            ...prev,
+            phase: `Analyzing batch ${data.batch}/${data.total_batches}...`,
+            batch: data.batch,
+            totalBatches: data.total_batches,
+            percent: 35 + ((data.batch - 1) / data.total_batches) * 60,
+          }));
+        }
+
         // Update node colors based on batch_complete events
         if (data.type === "batch_complete" && data.issues_by_file) {
-          console.log("Updating nodes with issues:", data.issues_by_file);
-          console.log("Current nodes paths:", nodes.map(n => n.path));
-          
           setNodes(prevNodes => {
             return prevNodes.map(node => {
-              // Normalize node path for comparison
               const normalizedNodePath = node.path.replace(/\\/g, '/');
-              
-              // Check if this file has issues
               const fileIssues = data.issues_by_file[normalizedNodePath];
 
               if (fileIssues && fileIssues.length > 0) {
-                console.log(`Updating node ${normalizedNodePath} with ${fileIssues.length} issues`);
                 return {
                   ...node,
                   severity: getSeverityFromIssues(fileIssues),
                   issues: fileIssues.length,
                   topIssue: fileIssues[0]?.description,
                 };
-              } else if (data.type === "batch_complete") {
-                // File was analyzed but has no issues - mark as green
-                return {
-                  ...node,
-                  severity: "green",
-                  issues: 0,
-                };
               }
-
+              // Don't mark as green yet - we don't know if this file was analyzed
               return node;
             });
           });
+
+          setRlmProgress(prev => ({
+            ...prev,
+            phase: `Batch ${data.batch}/${data.total_batches} complete`,
+            batch: data.batch,
+            totalBatches: data.total_batches,
+            issuesFound: data.total_issues || data.summary?.total_issues || 0,
+            percent: 35 + (data.batch / data.total_batches) * 60,
+          }));
         }
 
         // Mark RLM as complete
         if (data.type === "analysis_complete") {
+          // Mark all remaining gray nodes as green (analyzed, no issues found)
+          setNodes(prevNodes =>
+            prevNodes.map(node =>
+              node.severity === "gray" ? { ...node, severity: "green", issues: 0 } : node
+            )
+          );
+
+          setRlmProgress(prev => ({
+            ...prev,
+            phase: "Analysis complete!",
+            percent: 100,
+            issuesFound: data.issues_found ?? prev.issuesFound,
+          }));
+
           setRlmInProgress(false);
           localStorage.setItem("rlmInProgress", "false");
 
-          if (eventSourceRef.current) {
-            eventSourceRef.current.close();
-            eventSourceRef.current = null;
-          }
+          setTimeout(() => {
+            if (eventSourceRef.current) {
+              eventSourceRef.current.close();
+              eventSourceRef.current = null;
+            }
+          }, 1000);
         }
       } catch (error) {
         console.error("Error parsing SSE data:", error);
@@ -200,11 +259,29 @@ const Dashboard = () => {
 
       {/* RLM Analysis Progress Banner */}
       {rlmInProgress && (
-        <div className="bg-blue-500/10 border-b border-blue-500/20 px-4 py-2 flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-          <span className="text-sm text-blue-500">
-            AI Analysis in progress... Circle colors will update as issues are discovered
-          </span>
+        <div className="bg-blue-500/10 border-b border-blue-500/20 px-4 py-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+              <span className="text-sm font-medium text-blue-400">
+                {rlmProgress.phase}
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-xs text-blue-400/70">
+              {rlmProgress.totalBatches > 0 && (
+                <span>Batch {rlmProgress.batch}/{rlmProgress.totalBatches}</span>
+              )}
+              {rlmProgress.issuesFound > 0 && (
+                <span>{rlmProgress.issuesFound} issues found</span>
+              )}
+            </div>
+          </div>
+          <div className="w-full h-1 bg-blue-500/20 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue-500 transition-all duration-500 ease-out"
+              style={{ width: `${rlmProgress.percent}%` }}
+            />
+          </div>
         </div>
       )}
 

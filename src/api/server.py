@@ -13,6 +13,7 @@ Or:
 import sys
 import json
 import os
+import time
 from pathlib import Path
 
 # Disable stdout buffering for real-time logging
@@ -62,21 +63,33 @@ app.add_middleware(
 # Initialize pipeline
 pipeline = ContextifyPipeline()
 
+# Track analysis jobs and progress (list of events per repo, not single value)
+analysis_jobs: dict[str, dict] = {}
+analysis_events: dict[str, list[dict]] = {}
+
+
+def emit_progress(repo_name: str, data: dict):
+    """Append a progress event to the repo's event list. Thread-safe for use from callbacks."""
+    print(f"[PROGRESS] {data.get('type')}: {data}")
+    if repo_name not in analysis_events:
+        analysis_events[repo_name] = []
+    analysis_events[repo_name].append({
+        "timestamp": time.time(),
+        "data": data,
+    })
+
+
 # Progress callback for RLM scanner
 def progress_callback(data: dict):
     """Store progress updates for real-time tracking"""
     repo_name = data.get("repo_name", "unknown")
-    print(f"[PROGRESS] {data.get('type')}: {data}")  # Console logging
-    analysis_progress[repo_name] = {
-        "timestamp": time.time(),
-        "data": data
-    }
+    emit_progress(repo_name, data)
+
 
 # Initialize RLM scanner if available
 rlm_scanner = None
 if RLM_AVAILABLE:
     try:
-        import time
         rlm_scanner = EnhancedRLMScanner(
             max_iterations=5,
             output_dir=str(pipeline.output_dir),
@@ -90,10 +103,6 @@ if RLM_AVAILABLE:
 
 # Thread pool for running blocking operations
 executor = ThreadPoolExecutor(max_workers=4)
-
-# Track analysis jobs and progress
-analysis_jobs: dict[str, dict] = {}
-analysis_progress: dict[str, dict] = {}
 
 
 # Request/Response models
@@ -409,8 +418,9 @@ async def rlm_status():
 @app.get("/rlm/progress/{repo_name}")
 async def get_rlm_progress(repo_name: str):
     """Get real-time progress for an ongoing RLM analysis."""
-    if repo_name in analysis_progress:
-        return analysis_progress[repo_name]
+    if repo_name in analysis_events and analysis_events[repo_name]:
+        latest = analysis_events[repo_name][-1]
+        return latest
     return {"status": "not_found", "message": "No progress data available"}
 
 
@@ -419,8 +429,7 @@ async def stream_rlm_progress(repo_name: str):
     """
     Server-Sent Events (SSE) stream for real-time RLM progress updates.
 
-    The frontend can connect to this endpoint to receive live progress updates
-    without polling. Events are sent whenever progress_callback is triggered.
+    Uses an event list so no events are lost between polls.
 
     Usage (JavaScript):
         const eventSource = new EventSource(`http://localhost:8000/rlm/stream/${repoName}`);
@@ -431,21 +440,21 @@ async def stream_rlm_progress(repo_name: str):
     """
     async def event_generator():
         """Generate SSE events from progress updates"""
-        last_timestamp = 0
+        event_index = 0
         retry_count = 0
-        max_retries = 180  # 3 minutes at 1 second intervals
+        max_retries = 600  # 3 minutes at 0.3s intervals
 
         # Send initial connection event
         yield f"data: {json.dumps({'type': 'connected', 'repo_name': repo_name})}\n\n"
 
         while retry_count < max_retries:
-            if repo_name in analysis_progress:
-                progress = analysis_progress[repo_name]
-                current_timestamp = progress.get("timestamp", 0)
+            if repo_name in analysis_events:
+                events = analysis_events[repo_name]
 
-                # Only send new updates
-                if current_timestamp > last_timestamp:
-                    last_timestamp = current_timestamp
+                # Send all new events since our last index
+                while event_index < len(events):
+                    progress = events[event_index]
+                    event_index += 1
                     retry_count = 0  # Reset retry count on new data
 
                     # Send progress data
@@ -454,14 +463,13 @@ async def stream_rlm_progress(repo_name: str):
                     # Check if analysis is complete
                     if progress['data'].get('type') in ['analysis_complete', 'error']:
                         yield f"data: {json.dumps({'type': 'stream_end'})}\n\n"
-                        break
+                        return
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.3)
             retry_count += 1
 
-        # Timeout or completion
-        if retry_count >= max_retries:
-            yield f"data: {json.dumps({'type': 'timeout', 'message': 'Stream timeout after 3 minutes'})}\n\n"
+        # Timeout
+        yield f"data: {json.dumps({'type': 'timeout', 'message': 'Stream timeout after 3 minutes'})}\n\n"
 
     return StreamingResponse(
         event_generator(),
@@ -497,6 +505,9 @@ async def analyze_full(request: FullAnalysisRequest):
         # Parse repo info
         owner, repo_name = parse_github_url(request.url)
 
+        # Clear previous events for a fresh run
+        analysis_events[repo_name] = []
+
         print(f"\n{'='*70}")
         print(f"FULL ANALYSIS: {owner}/{repo_name}")
         print(f"{'='*70}")
@@ -506,15 +517,11 @@ async def analyze_full(request: FullAnalysisRequest):
         print(f"\n[1/2] Building code graph for {owner}/{repo_name}...", flush=True)
         sys.stdout.flush()
 
-        # Send graph_building progress event
-        analysis_progress[repo_name] = {
-            "timestamp": time.time(),
-            "data": {
-                "type": "graph_building",
-                "repo_name": repo_name,
-                "status": "Building code graph..."
-            }
-        }
+        emit_progress(repo_name, {
+            "type": "graph_building",
+            "repo_name": repo_name,
+            "status": "Building code graph..."
+        })
 
         loop = asyncio.get_event_loop()
         graph_result = await loop.run_in_executor(
@@ -536,16 +543,12 @@ async def analyze_full(request: FullAnalysisRequest):
         print(f"✓ Graph built: {graph_result.node_count} nodes, {graph_result.edge_count} edges", flush=True)
         sys.stdout.flush()
 
-        # Send graph_complete progress event
-        analysis_progress[repo_name] = {
-            "timestamp": time.time(),
-            "data": {
-                "type": "graph_complete",
-                "repo_name": repo_name,
-                "nodes": graph_result.node_count,
-                "edges": graph_result.edge_count,
-            }
-        }
+        emit_progress(repo_name, {
+            "type": "graph_complete",
+            "repo_name": repo_name,
+            "nodes": graph_result.node_count,
+            "edges": graph_result.edge_count,
+        })
 
         # Step 2: Run RLM scan (if requested and available)
         rlm_analysis = None
@@ -555,15 +558,11 @@ async def analyze_full(request: FullAnalysisRequest):
                 print(f"      This may take several minutes depending on repository size", flush=True)
                 sys.stdout.flush()
 
-                # Store initial progress
-                analysis_progress[repo_name] = {
-                    "timestamp": time.time(),
-                    "data": {
-                        "type": "rlm_started",
-                        "repo_name": repo_name,
-                        "status": "Starting RLM analysis..."
-                    }
-                }
+                emit_progress(repo_name, {
+                    "type": "rlm_started",
+                    "repo_name": repo_name,
+                    "status": "Starting RLM analysis..."
+                })
 
                 # Call scan_repository directly since we already built the graph
                 rlm_result = await loop.run_in_executor(
@@ -584,17 +583,13 @@ async def analyze_full(request: FullAnalysisRequest):
                 print(f"✓ RLM complete: {rlm_result.get('issues_found')} issues found in {rlm_result.get('execution_time', 0):.2f}s", flush=True)
                 sys.stdout.flush()
 
-                # Send completion event for SSE
-                analysis_progress[repo_name] = {
-                    "timestamp": time.time(),
-                    "data": {
-                        "type": "analysis_complete",
-                        "repo_name": repo_name,
-                        "files_analyzed": rlm_result.get("files_analyzed"),
-                        "issues_found": rlm_result.get("issues_found"),
-                        "execution_time": rlm_result.get("execution_time")
-                    }
-                }
+                emit_progress(repo_name, {
+                    "type": "analysis_complete",
+                    "repo_name": repo_name,
+                    "files_analyzed": rlm_result.get("files_analyzed"),
+                    "issues_found": rlm_result.get("issues_found"),
+                    "execution_time": rlm_result.get("execution_time")
+                })
             else:
                 print("\n[2/2] Skipping RLM (not available)", flush=True)
                 sys.stdout.flush()
@@ -639,6 +634,9 @@ async def analyze_local(request: LocalAnalysisRequest):
         if not repo_path.exists():
             raise HTTPException(status_code=404, detail=f"Local repository not found: {repo_name}")
 
+        # Clear previous events for a fresh run
+        analysis_events[repo_name] = []
+
         print(f"\n{'='*70}")
         print(f"LOCAL ANALYSIS: {repo_name}")
         print(f"{'='*70}")
@@ -650,15 +648,11 @@ async def analyze_local(request: LocalAnalysisRequest):
         print(f"\n[1/2] Building code graph for {repo_name}...", flush=True)
         sys.stdout.flush()
 
-        # Send graph_building progress event
-        analysis_progress[repo_name] = {
-            "timestamp": time.time(),
-            "data": {
-                "type": "graph_building",
-                "repo_name": repo_name,
-                "status": "Building code graph..."
-            }
-        }
+        emit_progress(repo_name, {
+            "type": "graph_building",
+            "repo_name": repo_name,
+            "status": "Building code graph..."
+        })
 
         loop = asyncio.get_event_loop()
 
@@ -690,17 +684,13 @@ async def analyze_local(request: LocalAnalysisRequest):
         print(f"[OK] Graph built: {graph_result['node_count']} nodes, {graph_result['edge_count']} edges", flush=True)
         sys.stdout.flush()
 
-        # Send graph_complete progress event
-        analysis_progress[repo_name] = {
-            "timestamp": time.time(),
-            "data": {
-                "type": "graph_complete",
-                "repo_name": repo_name,
-                "nodes": graph_result["node_count"],
-                "edges": graph_result["edge_count"],
-                "languages": graph_result["stats"].get("languages", {})
-            }
-        }
+        emit_progress(repo_name, {
+            "type": "graph_complete",
+            "repo_name": repo_name,
+            "nodes": graph_result["node_count"],
+            "edges": graph_result["edge_count"],
+            "languages": graph_result["stats"].get("languages", {})
+        })
 
         # Step 2: Run RLM scan (if requested and available)
         rlm_analysis = None
@@ -710,15 +700,11 @@ async def analyze_local(request: LocalAnalysisRequest):
                 print(f"      This may take several minutes depending on repository size", flush=True)
                 sys.stdout.flush()
 
-                # Store initial progress
-                analysis_progress[repo_name] = {
-                    "timestamp": time.time(),
-                    "data": {
-                        "type": "rlm_started",
-                        "repo_name": repo_name,
-                        "status": "Starting RLM analysis..."
-                    }
-                }
+                emit_progress(repo_name, {
+                    "type": "rlm_started",
+                    "repo_name": repo_name,
+                    "status": "Starting RLM analysis..."
+                })
 
                 rlm_result = await loop.run_in_executor(
                     executor,
@@ -738,17 +724,13 @@ async def analyze_local(request: LocalAnalysisRequest):
                 print(f"[OK] RLM complete: {rlm_result.get('total_issues')} issues found in {rlm_result.get('execution_time', 0):.2f}s", flush=True)
                 sys.stdout.flush()
 
-                # Send completion event for SSE
-                analysis_progress[repo_name] = {
-                    "timestamp": time.time(),
-                    "data": {
-                        "type": "analysis_complete",
-                        "repo_name": repo_name,
-                        "files_analyzed": rlm_result.get("files_analyzed"),
-                        "issues_found": rlm_result.get("total_issues"),
-                        "execution_time": rlm_result.get("execution_time")
-                    }
-                }
+                emit_progress(repo_name, {
+                    "type": "analysis_complete",
+                    "repo_name": repo_name,
+                    "files_analyzed": rlm_result.get("files_analyzed"),
+                    "issues_found": rlm_result.get("total_issues"),
+                    "execution_time": rlm_result.get("execution_time")
+                })
             else:
                 print("\n[2/2] Skipping RLM (not available)", flush=True)
                 sys.stdout.flush()

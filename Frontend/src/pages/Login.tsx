@@ -11,10 +11,14 @@ const API_BASE = "http://localhost:8000";
 const Login = () => {
   const navigate = useNavigate();
   const [analyzingDemo, setAnalyzingDemo] = useState(false);
+  const [progressPhase, setProgressPhase] = useState("");
+  const [progressPercent, setProgressPercent] = useState(0);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   const startLiveDemo = async () => {
     setAnalyzingDemo(true);
+    setProgressPhase("Connecting...");
+    setProgressPercent(5);
 
     try {
       const repoName = "demo_repo";
@@ -33,10 +37,12 @@ const Login = () => {
       // Trigger actual RLM analysis on demo_repo - events will now be captured
       await analyzeLocalRepo(repoName, false, true);
 
-      // Navigation happens when batch_start event fires
+      // Navigation happens when graph_complete event fires
     } catch (err) {
       console.error("Demo analysis failed:", err);
       setAnalyzingDemo(false);
+      setProgressPhase("");
+      setProgressPercent(0);
       // Close SSE on error
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
@@ -58,17 +64,46 @@ const Login = () => {
         console.log("SSE Progress:", data);
 
         // Notify that connection is ready
-        if (data.type === "connected" && onConnected) {
-          onConnected();
+        if (data.type === "connected") {
+          setProgressPhase("Connected to analysis stream");
+          setProgressPercent(10);
+          if (onConnected) onConnected();
         }
 
-        // Navigate to dashboard when batch starts (RLM is actively working)
-        if (data.type === "batch_start") {
+        if (data.type === "graph_building") {
+          setProgressPhase("Building dependency graph...");
+          setProgressPercent(20);
+        }
+
+        // Navigate to dashboard as soon as the graph is built
+        if (data.type === "graph_complete") {
+          setProgressPhase(`Graph ready — ${data.nodes} nodes, ${data.edges} edges`);
+          setProgressPercent(50);
           setTimeout(() => {
             localStorage.setItem("currentRepo", repoName);
             localStorage.setItem("rlmInProgress", "true");
             navigate("/dashboard");
           }, 800);
+        }
+
+        if (data.type === "collecting_files") {
+          setProgressPhase("Collecting files for analysis...");
+          setProgressPercent(55);
+        }
+
+        if (data.type === "files_collected") {
+          setProgressPhase(`Found ${data.file_count} files to analyze`);
+          setProgressPercent(60);
+        }
+
+        if (data.type === "rlm_started") {
+          setProgressPhase("AI analysis starting...");
+          setProgressPercent(65);
+        }
+
+        if (data.type === "batch_start") {
+          setProgressPhase(`Analyzing batch ${data.batch}/${data.total_batches}...`);
+          setProgressPercent(70);
         }
 
         // Mark RLM as complete
@@ -176,7 +211,7 @@ const Login = () => {
               {analyzingDemo ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Analyzing...
+                  {progressPhase || "Starting analysis..."}
                 </>
               ) : (
                 <>
@@ -185,6 +220,20 @@ const Login = () => {
                 </>
               )}
             </Button>
+
+            {analyzingDemo && (
+              <div className="mt-1 space-y-2">
+                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground text-center">{progressPhase}</p>
+              </div>
+            )}
+
             <Button
               variant="ghost"
               size="sm"

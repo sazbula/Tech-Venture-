@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -269,6 +269,7 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
   const [collapsedClusters, setCollapsedClusters] = useState<Set<string>>(
     new Set()
   );
+  const svgContainerRef = useRef<HTMLDivElement>(null);
 
   const toggleCluster = useCallback((id: string) => {
     setCollapsedClusters(prev => {
@@ -279,7 +280,22 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
   }, []);
 
   const handleZoom = useCallback((dir: number) => {
-    setZoom(z => Math.max(0.3, Math.min(2.5, z + dir * 0.2)));
+    setZoom(z => Math.max(0.3, Math.min(3, z + dir * 0.2)));
+  }, []);
+
+  // Mouse wheel zoom handler
+  useEffect(() => {
+    const container = svgContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = -e.deltaY / 1000; // Normalize wheel delta
+      setZoom(z => Math.max(0.3, Math.min(3, z + delta)));
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
   }, []);
 
   // Generate dynamic cluster definitions from nodes
@@ -337,6 +353,13 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
           <RotateCcw className="w-3.5 h-3.5" />
         </Button>
 
+        {/* Zoom level indicator */}
+        <div className="ml-2 px-2 h-8 bg-card/80 backdrop-blur border border-border rounded-md flex items-center">
+          <span className="text-xs text-muted-foreground font-mono">
+            {Math.round(zoom * 100)}%
+          </span>
+        </div>
+
         {/* Modules is now fixed (not toggle-able) */}
         <div className="w-px h-6 bg-border mx-1" />
         <Button
@@ -353,12 +376,17 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
       <GraphLegend counts={severityCounts} />
 
       {/* Graph canvas */}
-      <div className="w-full h-full overflow-auto" style={{ touchAction: "none" }}>
+      <div 
+        ref={svgContainerRef}
+        className="w-full h-full overflow-auto cursor-grab active:cursor-grabbing" 
+        style={{ touchAction: "none" }}
+      >
         <svg
           width={svgW * zoom}
           height={svgH * zoom}
           viewBox={`0 0 ${svgW} ${svgH}`}
-          className="min-w-full min-h-full"
+          className="min-w-full min-h-full transition-all duration-150"
+          style={{ transition: "width 0.15s ease-out, height 0.15s ease-out" }}
         >
           {/* Arrowhead markers - subtle but visible */}
           <defs>
@@ -399,9 +427,10 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                 d={`M ${px} ${py} C ${px} ${midY}, ${cx} ${midY}, ${cx} ${cy}`}
                 fill="none"
                 stroke="hsl(211, 40%, 25%)"
-                strokeWidth={2}
+                strokeWidth={2 / zoom}
                 strokeDasharray="6 4"
                 opacity={0.4}
+                style={{ transition: "stroke-width 0.1s" }}
               />
             );
           })}
@@ -423,7 +452,8 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                   rx={8}
                   fill="hsl(211, 50%, 10%)"
                   stroke="hsl(211, 40%, 18%)"
-                  strokeWidth={1}
+                  strokeWidth={1 / zoom}
+                  style={{ transition: "stroke-width 0.1s" }}
                 />
                 {/* Cluster header */}
                 <g className="cursor-pointer" onClick={() => toggleCluster(cd.id)}>
@@ -449,7 +479,7 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                   <text
                     x={bounds.x + 12}
                     y={bounds.y + 18}
-                    fontSize={12}
+                    fontSize={12 / zoom}
                     fill="hsl(211, 30%, 60%)"
                     fontFamily="monospace"
                   >
@@ -458,7 +488,7 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                   <text
                     x={bounds.x + 26}
                     y={bounds.y + 18}
-                    fontSize={11}
+                    fontSize={11 / zoom}
                     fill="hsl(217, 100%, 96%)"
                     fontFamily="'Space Grotesk', sans-serif"
                     fontWeight={600}
@@ -468,7 +498,7 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                   <text
                     x={bounds.x + bounds.w - 12}
                     y={bounds.y + 18}
-                    fontSize={10}
+                    fontSize={10 / zoom}
                     fill="hsl(211, 30%, 50%)"
                     textAnchor="end"
                     fontFamily="'JetBrains Mono', monospace"
@@ -522,7 +552,7 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                 d={pathD}
                 fill="none"
                 stroke={isHighlighted ? "hsl(252, 100%, 68%)" : "hsl(210, 30%, 40%)"}
-                strokeWidth={isHighlighted ? 2 : 0.75}
+                strokeWidth={isHighlighted ? 2 / zoom : 0.75 / zoom}
                 opacity={hoveredNode ? (isHighlighted ? 0.9 : 0) : 0}
                 markerEnd={isHighlighted ? "url(#arrowhead-highlight)" : "url(#arrowhead)"}
                 filter={isHighlighted ? "url(#glow)" : undefined}
@@ -563,8 +593,8 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                   fill={severityFill[node.severity]}
                   opacity={isSelected ? 1 : isHovered ? 0.9 : 0.7}
                   stroke={isSelected ? "hsl(217, 100%, 96%)" : "transparent"}
-                  strokeWidth={isSelected ? 2 : 0}
-                  style={{ transition: "opacity 0.15s" }}
+                  strokeWidth={isSelected ? 2 / zoom : 0}
+                  style={{ transition: "opacity 0.15s, stroke-width 0.1s" }}
                 />
 
                 {node.severity === "purple" && (
@@ -574,9 +604,10 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                     r={NODE_R + 4}
                     fill="none"
                     stroke={severityFill.purple}
-                    strokeWidth="1"
+                    strokeWidth={1 / zoom}
                     opacity={0.4}
                     className="animate-pulse"
+                    style={{ transition: "stroke-width 0.1s" }}
                   />
                 )}
 
@@ -584,9 +615,10 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
                   x={pos.x}
                   y={pos.y + NODE_R + 14}
                   textAnchor="middle"
-                  fontSize={8}
+                  fontSize={Math.max(6, 8 / zoom)}
                   fill="hsl(211, 30%, 60%)"
                   fontFamily="'JetBrains Mono', monospace"
+                  style={{ transition: "font-size 0.1s" }}
                 >
                   {node.path.split("/").pop()}
                 </text>

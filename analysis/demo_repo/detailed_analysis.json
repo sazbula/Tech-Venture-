@@ -1,11 +1,46 @@
 {
-  "issues_by_file": {},
+  "issues_by_file": {
+    "core/config.py": [
+      {
+        "file": "core/config.py",
+        "severity": "high",
+        "description": "Hardcoded sensitive info"
+      },
+      {
+        "file": "core/config.py",
+        "severity": "medium",
+        "description": "Environment var fallback insecure"
+      },
+      {
+        "file": "core/config.py",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "unknown": [
+      {
+        "file": "unknown",
+        "severity": "high",
+        "description": "Mutable default argument"
+      },
+      {
+        "file": "unknown",
+        "severity": "medium",
+        "description": "Division by zero potential"
+      },
+      {
+        "file": "unknown",
+        "severity": "low",
+        "description": "Email validation weak"
+      }
+    ]
+  },
   "summary": {
     "total_files": 3,
-    "files_with_issues": 0,
-    "total_issues": 0,
+    "files_with_issues": 2,
+    "total_issues": 6,
     "critical_issues": 0,
-    "high_issues": 0,
+    "high_issues": 2,
     "batches_completed": 1,
     "total_batches": 1
   }

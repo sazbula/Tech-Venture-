@@ -179,3 +179,68 @@ export async function analyzeLocalRepo(
 
   return response.json();
 }
+
+// ---------------------------
+// RLM issue helpers
+// ---------------------------
+
+export type BackendIssue = {
+  file?: string;
+  severity?: string;
+  description?: string;
+  line?: number | string;
+  rule?: string;
+  type?: string;
+  title?: string;
+  code?: string;
+  snippet?: string;
+};
+
+const severityFromBackend = (severity?: string): "green" | "yellow" | "orange" | "red" | "purple" => {
+  const s = (severity || "").toLowerCase();
+  if (s === "critical") return "purple";
+  if (s === "high") return "red";
+  if (s === "medium") return "orange";
+  if (s === "low") return "yellow";
+  return "green";
+};
+
+/**
+ * Fetch full RLM results for a repo
+ */
+export async function getRlmResults(repoName: string): Promise<any> {
+  const response = await fetch(`${API_BASE}/rlm/results/${encodeURIComponent(repoName)}`);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: "Unknown error" }));
+    throw new Error(error.detail || `Failed to load RLM results: ${response.status}`);
+  }
+  return response.json();
+}
+
+/**
+ * Fetch issues for a single file, mapped into UI Issue shape
+ */
+export async function getFileIssues(
+  repoName: string,
+  filePath: string
+): Promise<import("@/data/mockData").Issue[]> {
+  const results = await getRlmResults(repoName);
+  const normalized = filePath.replace(/\\\\/g, "/");
+  const rawIssues: BackendIssue[] =
+    results?.issues_by_file?.[normalized] ||
+    results?.issues_by_file?.[filePath] ||
+    [];
+
+  return rawIssues.map((issue, idx) => ({
+    id: idx,
+    file: normalized,
+    line: String(issue.line ?? issue.rule ?? "-"),
+    severity: severityFromBackend(issue.severity),
+    type: (issue.type as any) || "analysis",
+    title: issue.title || issue.description || "Issue",
+    rule: issue.rule || issue.code || "N/A",
+    status: "open",
+    description: issue.description,
+    codeSnippet: issue.snippet,
+  }));
+}

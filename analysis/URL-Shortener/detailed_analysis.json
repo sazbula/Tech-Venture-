@@ -1,0 +1,184 @@
+{
+  "issues_by_file": {
+    "script1.py": [
+      {
+        "file": "script1.py",
+        "severity": "medium",
+        "description": "Potential data handling issue"
+      }
+    ],
+    "utils/utility.py": [
+      {
+        "file": "utils/utility.py",
+        "severity": "low",
+        "description": "Minor style issue"
+      }
+    ],
+    "main.py": [
+      {
+        "file": "main.py",
+        "severity": "high",
+        "description": "Security risk potential"
+      },
+      {
+        "file": "main.py",
+        "severity": "critical",
+        "description": "Manual review recommended"
+      }
+    ],
+    "tests/test_main.py": [
+      {
+        "file": "tests/test_main.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "lib/module.py": [
+      {
+        "file": "lib/module.py",
+        "severity": "critical",
+        "description": "Confirmed login vulnerability"
+      }
+    ],
+    "url_shortener_website/urls.py": [
+      {
+        "file": "url_shortener_website/urls.py",
+        "severity": "medium",
+        "description": "Potential bug in loop"
+      }
+    ],
+    "url_shortener_website/middleware.py": [
+      {
+        "file": "url_shortener_website/middleware.py",
+        "severity": "low",
+        "description": "Cosmetic issue: inconsistent naming"
+      }
+    ],
+    "url_shortener_website/views.py": [
+      {
+        "file": "url_shortener_website/views.py",
+        "severity": "none",
+        "description": ""
+      }
+    ],
+    "url_shortener_website/migrations/0004_rename_short_url_urlmapping_shortcode.py": [
+      {
+        "file": "url_shortener_website/migrations/0004_rename_short_url_urlmapping_shortcode.py",
+        "severity": "high",
+        "description": "Security risk: use of eval"
+      }
+    ],
+    "url_shortener_website/migrations/0008_rename_url_id_userurlmapping_url_and_more.py": [
+      {
+        "file": "url_shortener_website/migrations/0008_rename_url_id_userurlmapping_url_and_more.py",
+        "severity": "critical",
+        "description": "Data loss risk: uncaught exception"
+      }
+    ],
+    "url_shortener_website/migrations/0005_alter_urlmapping_original_url.py": [
+      {
+        "file": "url_shortener_website/migrations/0005_alter_urlmapping_original_url.py",
+        "severity": "medium",
+        "description": "Missing max_length attribute for CharField"
+      }
+    ],
+    "test_code.py": [
+      {
+        "file": "test_code.py",
+        "severity": "none",
+        "description": "No issues detected"
+      }
+    ],
+    "url_shortener_website/tests/test_user_repository.py": [
+      {
+        "file": "url_shortener_website/tests/test_user_repository.py",
+        "severity": "medium",
+        "description": "get_by_email called"
+      },
+      {
+        "file": "url_shortener_website/tests/test_user_repository.py",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "<unknown>": [
+      {
+        "file": "<unknown>",
+        "severity": "high",
+        "description": "Missing mock implementation"
+      }
+    ],
+    "url_shortener_website/tests/__init__.py": [
+      {
+        "file": "url_shortener_website/tests/__init__.py",
+        "severity": "none",
+        "description": "No issues"
+      }
+    ],
+    "test_mapping_creation.py": [
+      {
+        "file": "test_mapping_creation.py",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "utils/helpers.py": [
+      {
+        "file": "utils/helpers.py",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    "services/data_processor.py": [
+      {
+        "file": "services/data_processor.py",
+        "severity": "medium",
+        "description": "Potential data processing issue"
+      }
+    ],
+    "config/settings.py": [
+      {
+        "file": "config/settings.py",
+        "severity": "none",
+        "description": ""
+      }
+    ],
+    "url_shortener_website/utils/user_repository.py": [
+      {
+        "file": "url_shortener_website/utils/user_repository.py",
+        "severity": "none",
+        "description": "Manual review recommended"
+      }
+    ],
+    "url_shortener_website/utils/user_url_mapping_repository.py": [
+      {
+        "file": "url_shortener_website/utils/user_url_mapping_repository.py",
+        "severity": "low",
+        "description": "Minor formatting issues"
+      }
+    ],
+    "url_shortener_website/utils/validation_service.py": [
+      {
+        "file": "url_shortener_website/utils/validation_service.py",
+        "severity": "medium",
+        "description": "Potential security risk"
+      }
+    ],
+    "url_shortener_website/api/views.py": [
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "high",
+        "description": "Possible logic error"
+      }
+    ]
+  },
+  "summary": {
+    "total_files": 44,
+    "files_with_issues": 23,
+    "total_issues": 25,
+    "critical_issues": 3,
+    "high_issues": 4,
+    "batches_completed": 5,
+    "total_batches": 5
+  }
+}

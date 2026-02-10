@@ -610,7 +610,7 @@ const FileGraph = ({ nodes, edges, onNodeClick, selectedNodeId }: FileGraphProps
             if (!pos) return null;
             const isSelected = selectedNodeId === node.id;
             const isHovered = hoveredNode?.id === node.id;
-            const hasIssues = (node.issues || 0) > 0 && node.severity !== "green" && node.severity !== "gray";
+            const hasIssues = node.severity !== "green" && node.severity !== "gray";
 
             return (
               <g

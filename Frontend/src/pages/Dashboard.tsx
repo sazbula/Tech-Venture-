@@ -3,9 +3,9 @@ import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import FileGraph from "@/components/dashboard/FileGraph";
 import FileDetailsDrawer from "@/components/dashboard/FileDetailsDrawer";
 import { mockNodes, mockIssues, mockEdges } from "@/data/mockData";
-import type { FileNode, Edge } from "@/data/mockData";
+import type { FileNode, Edge, Issue } from "@/data/mockData";
 import AppHeader from "@/components/layout/AppHeader";
-import { getGraph, type GraphNode, type GraphEdge } from "@/services/api";
+import { getGraph, getFileIssues, type GraphNode, type GraphEdge } from "@/services/api";
 import { Loader2 } from "lucide-react";
 
 const API_BASE = "http://localhost:8000";
@@ -15,11 +15,11 @@ const API_BASE = "http://localhost:8000";
 const getSeverityFromIssues = (issues: any[]): FileNode["severity"] => {
   if (issues.length === 0) return "green";
 
-  const hasCritical = issues.some(i => i.severity === "critical");
-  const hasHigh = issues.some(i => i.severity === "high");
-  const hasMedium = issues.some(i => i.severity === "medium");
-  const hasLow = issues.some(i => i.severity === "low");
-  const allNone = issues.every(i => i.severity === "none");
+  const hasCritical = issues.some(i => ["critical", "purple"].includes(i.severity));
+  const hasHigh = issues.some(i => ["high", "red"].includes(i.severity));
+  const hasMedium = issues.some(i => ["medium", "orange"].includes(i.severity));
+  const hasLow = issues.some(i => ["low", "yellow"].includes(i.severity));
+  const allNone = issues.every(i => ["none", "green"].includes(i.severity));
 
   if (allNone) return "green";
   if (hasCritical) return "purple";
@@ -42,6 +42,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [rlmInProgress, setRlmInProgress] = useState(false);
+  const [issuesByFile, setIssuesByFile] = useState<Record<string, Issue[]>>({});
 
   // RLM progress details
   const [rlmProgress, setRlmProgress] = useState({
@@ -77,11 +78,10 @@ const Dashboard = () => {
           id: n.id,
           path: n.path,
           folder: n.folder,
-          severity: n.severity,
+          severity: n.severity === "gray" ? "green" : n.severity,
           issues: n.issues,
           topIssue: n.topIssue,
           size: n.size,
-          // Add x, y for layout (will be computed by FileGraph)
           x: 0,
           y: 0,
         }));
@@ -263,8 +263,39 @@ const Dashboard = () => {
   });
 
   const fileIssues = selectedNode
-    ? mockIssues.filter(i => i.file === selectedNode.path)
+    ? issuesByFile[selectedNode.path] || []
     : [];
+
+  const handleNodeClick = async (node: FileNode) => {
+    setSelectedNode(node);
+
+    const repoName = localStorage.getItem("currentRepo");
+    if (!repoName) {
+      setIssuesByFile(prev => ({ ...prev, [node.path]: mockIssues.filter(i => i.file === node.path) }));
+      return;
+    }
+    if (issuesByFile[node.path]) return;
+
+    try {
+      const issues = await getFileIssues(repoName, node.path);
+      setIssuesByFile(prev => ({ ...prev, [node.path]: issues }));
+
+      setNodes(prev =>
+        prev.map(n =>
+          n.id === node.id
+            ? {
+                ...n,
+                issues: issues.length,
+                severity: issues.length > 0 ? getSeverityFromIssues(issues) : "green",
+                topIssue: issues[0]?.title || issues[0]?.description || n.topIssue,
+              }
+            : n
+        )
+      );
+    } catch (err) {
+      console.error("Failed to load file issues", err);
+    }
+  };
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
@@ -329,7 +360,7 @@ const Dashboard = () => {
             <FileGraph
               nodes={filteredNodes}
               edges={edges}
-              onNodeClick={setSelectedNode}
+              onNodeClick={handleNodeClick}
               selectedNodeId={selectedNode?.id}
             />
           )}

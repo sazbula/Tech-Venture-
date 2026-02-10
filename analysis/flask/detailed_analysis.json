@@ -1,0 +1,793 @@
+{
+  "issues_by_file": {
+    ".pre-commit-config.yaml": [
+      {
+        "file": ".pre-commit-config.yaml",
+        "severity": "none",
+        "description": "No issues detected"
+      }
+    ],
+    ".readthedocs.yaml": [
+      {
+        "file": ".readthedocs.yaml",
+        "severity": "medium",
+        "description": "Ubuntu version unsupported"
+      },
+      {
+        "file": ".readthedocs.yaml",
+        "severity": "medium",
+        "description": "Python version unsupported"
+      },
+      {
+        "file": ".readthedocs.yaml",
+        "severity": "medium",
+        "description": "Special version tag unsupported"
+      },
+      {
+        "file": ".readthedocs.yaml",
+        "severity": "medium",
+        "description": "Unknown command issue"
+      }
+    ],
+    "pyproject.toml": [
+      {
+        "file": "pyproject.toml",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    ".devcontainer/devcontainer.json": [
+      {
+        "file": ".devcontainer/devcontainer.json",
+        "severity": "medium",
+        "description": "Interpreter path invalid"
+      },
+      {
+        "file": ".devcontainer/devcontainer.json",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    ".devcontainer/on-create-command.sh": [
+      {
+        "file": ".devcontainer/on-create-command.sh",
+        "severity": "medium",
+        "description": "set -e usage"
+      },
+      {
+        "file": ".devcontainer/on-create-command.sh",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    "docs/conf.py": [
+      {
+        "file": "docs/conf.py",
+        "severity": "low",
+        "description": "Unused import packaging.version"
+      }
+    ],
+    "examples/celery/pyproject.toml": [
+      {
+        "file": "examples/celery/pyproject.toml",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    "examples/celery/src/task_app/tasks.py": [
+      {
+        "file": "examples/celery/src/task_app/tasks.py",
+        "severity": "medium",
+        "description": "Blocking call used"
+      },
+      {
+        "file": "examples/celery/src/task_app/tasks.py",
+        "severity": "low",
+        "description": "Return type inconsistency"
+      },
+      {
+        "file": "examples/celery/src/task_app/tasks.py",
+        "severity": "low",
+        "description": "Unnecessary ignore_result False"
+      },
+      {
+        "file": "examples/celery/src/task_app/tasks.py",
+        "severity": "medium",
+        "description": "Inefficient sleep usage"
+      }
+    ],
+    "examples/celery/src/task_app/views.py": [
+      {
+        "file": "examples/celery/src/task_app/views.py",
+        "severity": "medium",
+        "description": "Unvalidated input"
+      },
+      {
+        "file": "examples/celery/src/task_app/views.py",
+        "severity": "medium",
+        "description": "Potential DoS risk"
+      },
+      {
+        "file": "examples/celery/src/task_app/views.py",
+        "severity": "low",
+        "description": "Manual review recommended"
+      },
+      {
+        "file": "examples/celery/src/task_app/views.py",
+        "severity": "medium",
+        "description": "Error handling absent"
+      }
+    ],
+    "examples/celery/make_celery.py": [
+      {
+        "file": "examples/celery/make_celery.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "examples/javascript/tests/test_js_example.py": [
+      {
+        "file": "examples/javascript/tests/test_js_example.py",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    "examples/tutorial/pyproject.toml": [
+      {
+        "file": "examples/tutorial/pyproject.toml",
+        "severity": "medium",
+        "description": "Private classifier set"
+      },
+      {
+        "file": "examples/tutorial/pyproject.toml",
+        "severity": "low",
+        "description": "Unused maintainers field"
+      },
+      {
+        "file": "examples/tutorial/pyproject.toml",
+        "severity": "low",
+        "description": "Potential missing src folder"
+      }
+    ],
+    "examples/tutorial/flaskr/auth.py": [
+      {
+        "file": "examples/tutorial/flaskr/auth.py",
+        "severity": "medium",
+        "description": "CSRF protection missing"
+      },
+      {
+        "file": "examples/tutorial/flaskr/auth.py",
+        "severity": "high",
+        "description": "SQL injection risk"
+      },
+      {
+        "file": "examples/tutorial/flaskr/auth.py",
+        "severity": "low",
+        "description": "Cleartext password storage"
+      },
+      {
+        "file": "examples/tutorial/flaskr/auth.py",
+        "severity": "low",
+        "description": "No session expiration"
+      }
+    ],
+    "examples/tutorial/flaskr/blog.py": [
+      {
+        "file": "examples/tutorial/flaskr/blog.py",
+        "severity": "high",
+        "description": "SQL injection risk"
+      },
+      {
+        "file": "examples/tutorial/flaskr/blog.py",
+        "severity": "medium",
+        "description": "Title validation"
+      },
+      {
+        "file": "examples/tutorial/flaskr/blog.py",
+        "severity": "medium",
+        "description": "Error messaging"
+      },
+      {
+        "file": "examples/tutorial/flaskr/blog.py",
+        "severity": "medium",
+        "description": "Authorization check"
+      },
+      {
+        "file": "examples/tutorial/flaskr/blog.py",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    "examples/tutorial/flaskr/__init__.py": [
+      {
+        "file": "examples/tutorial/flaskr/__init__.py",
+        "severity": "high",
+        "description": "Hardcoded secret key"
+      },
+      {
+        "file": "examples/tutorial/flaskr/__init__.py",
+        "severity": "none",
+        "description": "Manual review recommended"
+      }
+    ],
+    "examples/tutorial/flaskr/static/style.css": [
+      {
+        "file": "examples/tutorial/flaskr/static/style.css",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    "examples/tutorial/flaskr/templates/base.html": [
+      {
+        "file": "examples/tutorial/flaskr/templates/base.html",
+        "severity": "low",
+        "description": "Missing list closing tags"
+      },
+      {
+        "file": "examples/tutorial/flaskr/templates/base.html",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "examples/tutorial/flaskr/templates/auth/login.html": [
+      {
+        "file": "examples/tutorial/flaskr/templates/auth/login.html",
+        "severity": "medium",
+        "description": "CSRF protection missing"
+      }
+    ],
+    "examples/tutorial/flaskr/templates/auth/register.html": [
+      {
+        "file": "examples/tutorial/flaskr/templates/auth/register.html",
+        "severity": "medium",
+        "description": "Missing CSRF protection"
+      }
+    ],
+    "examples/tutorial/flaskr/db.py": [
+      {
+        "file": "examples/tutorial/flaskr/db.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "examples/tutorial/flaskr/templates/blog/create.html": [
+      {
+        "file": "examples/tutorial/flaskr/templates/blog/create.html",
+        "severity": "medium",
+        "description": "XSS vulnerability risk"
+      }
+    ],
+    "examples/tutorial/flaskr/templates/blog/index.html": [
+      {
+        "file": "examples/tutorial/flaskr/templates/blog/index.html",
+        "severity": "medium",
+        "description": "User check logic"
+      },
+      {
+        "file": "examples/tutorial/flaskr/templates/blog/index.html",
+        "severity": "medium",
+        "description": "Datetime format hardcoded"
+      }
+    ],
+    "examples/tutorial/flaskr/templates/blog/update.html": [
+      {
+        "file": "examples/tutorial/flaskr/templates/blog/update.html",
+        "severity": "medium",
+        "description": "Potential XSS vulnerability"
+      },
+      {
+        "file": "examples/tutorial/flaskr/templates/blog/update.html",
+        "severity": "medium",
+        "description": "No CSRF protection"
+      },
+      {
+        "file": "examples/tutorial/flaskr/templates/blog/update.html",
+        "severity": "medium",
+        "description": "User confirmation bypass"
+      }
+    ],
+    "examples/tutorial/tests/test_auth.py": [
+      {
+        "file": "examples/tutorial/tests/test_auth.py",
+        "severity": "medium",
+        "description": "Hardcoded credentials"
+      },
+      {
+        "file": "examples/tutorial/tests/test_auth.py",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "examples/tutorial/tests/test_blog.py": [
+      {
+        "file": "examples/tutorial/tests/test_blog.py",
+        "severity": "none",
+        "description": "No issues detected"
+      }
+    ],
+    "examples/tutorial/tests/test_factory.py": [
+      {
+        "file": "examples/tutorial/tests/test_factory.py",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "src/flask/app.py": [
+      {
+        "file": "src/flask/app.py",
+        "severity": "medium",
+        "description": "Insecure session cookie configuration"
+      },
+      {
+        "file": "src/flask/app.py",
+        "severity": "low",
+        "description": "Potential cyclic reference with weakref"
+      },
+      {
+        "file": "src/flask/app.py",
+        "severity": "low",
+        "description": "Possible value error in open_resource"
+      },
+      {
+        "file": "src/flask/app.py",
+        "severity": "medium",
+        "description": "Static folder path assertion failure"
+      },
+      {
+        "file": "src/flask/app.py",
+        "severity": "medium",
+        "description": "Open function usage without context"
+      },
+      {
+        "file": "src/flask/app.py",
+        "severity": "low",
+        "description": "Deprecation warning for should_ignore_error"
+      },
+      {
+        "file": "src/flask/app.py",
+        "severity": "low",
+        "description": "Ensure sync usage inconsistent"
+      }
+    ],
+    "src/flask/blueprints.py": [
+      {
+        "file": "src/flask/blueprints.py",
+        "severity": "medium",
+        "description": "Sensitive file operation"
+      },
+      {
+        "file": "src/flask/blueprints.py",
+        "severity": "medium",
+        "description": "Potential config exposure"
+      },
+      {
+        "file": "src/flask/blueprints.py",
+        "severity": "low",
+        "description": "Duplicate method code"
+      },
+      {
+        "file": "src/flask/blueprints.py",
+        "severity": "medium",
+        "description": "Static files RuntimeError"
+      }
+    ],
+    "examples/tutorial/tests/test_db.py": [
+      {
+        "file": "examples/tutorial/tests/test_db.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "examples/tutorial/tests/conftest.py": [
+      {
+        "file": "examples/tutorial/tests/conftest.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/cli.py": [
+      {
+        "file": "src/flask/cli.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/config.py": [
+      {
+        "file": "src/flask/config.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/ctx.py": [
+      {
+        "file": "src/flask/ctx.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/debughelpers.py": [
+      {
+        "file": "src/flask/debughelpers.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/globals.py": [
+      {
+        "file": "src/flask/globals.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/helpers.py": [
+      {
+        "file": "src/flask/helpers.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/logging.py": [
+      {
+        "file": "src/flask/logging.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/sessions.py": [
+      {
+        "file": "src/flask/sessions.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/signals.py": [
+      {
+        "file": "src/flask/signals.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/templating.py": [
+      {
+        "file": "src/flask/templating.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/conftest.py": [
+      {
+        "file": "tests/conftest.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_converters.py": [
+      {
+        "file": "tests/test_converters.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/sansio/blueprints.py": [
+      {
+        "file": "src/flask/sansio/blueprints.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_config.py": [
+      {
+        "file": "tests/test_config.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_blueprints.py": [
+      {
+        "file": "tests/test_blueprints.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_async.py": [
+      {
+        "file": "tests/test_async.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_basic.py": [
+      {
+        "file": "tests/test_basic.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "src/flask/sansio/scaffold.py": [
+      {
+        "file": "src/flask/sansio/scaffold.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_appctx.py": [
+      {
+        "file": "tests/test_appctx.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_cli.py": [
+      {
+        "file": "tests/test_cli.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_regression.py": [
+      {
+        "file": "tests/test_regression.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_request.py": [
+      {
+        "file": "tests/test_request.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_json.py": [
+      {
+        "file": "tests/test_json.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_json_tag.py": [
+      {
+        "file": "tests/test_json_tag.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_helpers.py": [
+      {
+        "file": "tests/test_helpers.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_reqctx.py": [
+      {
+        "file": "tests/test_reqctx.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_session_interface.py": [
+      {
+        "file": "tests/test_session_interface.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_signals.py": [
+      {
+        "file": "tests/test_signals.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_instance_config.py": [
+      {
+        "file": "tests/test_instance_config.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_logging.py": [
+      {
+        "file": "tests/test_logging.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_views.py": [
+      {
+        "file": "tests/test_views.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_templating.py": [
+      {
+        "file": "tests/test_templating.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/templates/context_template.html": [
+      {
+        "file": "tests/templates/context_template.html",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/templates/escaping_template.html": [
+      {
+        "file": "tests/templates/escaping_template.html",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_user_error_handler.py": [
+      {
+        "file": "tests/test_user_error_handler.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/static/config.toml": [
+      {
+        "file": "tests/static/config.toml",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/static/config.json": [
+      {
+        "file": "tests/static/config.json",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/static/index.html": [
+      {
+        "file": "tests/static/index.html",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_testing.py": [
+      {
+        "file": "tests/test_testing.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_subclassing.py": [
+      {
+        "file": "tests/test_subclassing.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/templates/simple_template.html": [
+      {
+        "file": "tests/templates/simple_template.html",
+        "severity": "medium",
+        "description": "Unsanitized data use"
+      }
+    ],
+    "tests/templates/template_filter.html": [
+      {
+        "file": "tests/templates/template_filter.html",
+        "severity": "medium",
+        "description": "Undefined filter used"
+      }
+    ],
+    "tests/templates/template_test.html": [
+      {
+        "file": "tests/templates/template_test.html",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "tests/templates/_macro.html": [
+      {
+        "file": "tests/templates/_macro.html",
+        "severity": "low",
+        "description": "XSS vulnerability"
+      }
+    ],
+    "tests/test_apps/blueprintapp/__init__.py": [
+      {
+        "file": "tests/test_apps/blueprintapp/__init__.py",
+        "severity": "medium",
+        "description": "Debug mode enabled"
+      }
+    ],
+    "tests/test_apps/blueprintapp/apps/admin/__init__.py": [
+      {
+        "file": "tests/test_apps/blueprintapp/apps/admin/__init__.py",
+        "severity": "low",
+        "description": "Path inconsistency"
+      },
+      {
+        "file": "tests/test_apps/blueprintapp/apps/admin/__init__.py",
+        "severity": "medium",
+        "description": "Manual review recommended"
+      }
+    ],
+    "tests/test_apps/blueprintapp/apps/frontend/__init__.py": [
+      {
+        "file": "tests/test_apps/blueprintapp/apps/frontend/__init__.py",
+        "severity": "medium",
+        "description": "Missing template error"
+      },
+      {
+        "file": "tests/test_apps/blueprintapp/apps/frontend/__init__.py",
+        "severity": "low",
+        "description": "Manual review recommended"
+      }
+    ],
+    "tests/test_apps/blueprintapp/apps/__init__.py": [
+      {
+        "file": "tests/test_apps/blueprintapp/apps/__init__.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_apps/blueprintapp/apps/admin/templates/admin/index.html": [
+      {
+        "file": "tests/test_apps/blueprintapp/apps/admin/templates/admin/index.html",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "tests/test_apps/blueprintapp/apps/admin/static/css/test.css": [
+      {
+        "file": "tests/test_apps/blueprintapp/apps/admin/static/css/test.css",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "main.py": [
+      {
+        "file": "main.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "utils.py": [
+      {
+        "file": "utils.py",
+        "severity": "high",
+        "description": "Manual review recommended"
+      }
+    ],
+    "data.json": [
+      {
+        "file": "data.json",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "README.md": [
+      {
+        "file": "README.md",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "config.yaml": [
+      {
+        "file": "config.yaml",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ]
+  },
+  "summary": {
+    "total_files": 115,
+    "files_with_issues": 85,
+    "total_issues": 122,
+    "critical_issues": 0,
+    "high_issues": 4,
+    "batches_completed": 12,
+    "total_batches": 12
+  }
+}

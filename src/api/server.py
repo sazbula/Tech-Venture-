@@ -473,12 +473,14 @@ Code:
 {file_content[:3000]}
 ```
 
-Provide a concise response in plain text using simple formatting:
+Provide a concise response in plain text. Structure your response as:
 1. Root cause (1-2 sentences)
-2. Recommended fix (2-3 steps using numbered list)
+2. Recommended fix (2-3 steps)
 3. Prevention (1 sentence)
 
-Use only basic markdown: numbered lists (1. 2. 3.) and bullet points (- item). Keep it simple and readable."""
+IMPORTANT: Use minimal formatting. Only use plain text with simple numbered lists (1. 2. 3.) or bullet points (- item).
+Do NOT use: asterisks for bold/italic, backticks for code, multiple line breaks, or any other markdown symbols.
+Keep it clean and readable."""
         else:
             # General file analysis
             issues_context = ""
@@ -496,12 +498,14 @@ Code:
 {file_content[:3000]}
 ```
 
-Provide a concise response in plain text using simple formatting:
+Provide a concise response in plain text. Structure your response as:
 1. Brief summary (1-2 sentences)
-2. Key improvements (2-3 bullet points using - format)
+2. Key improvements (2-3 bullet points)
 3. Priority action (1 sentence)
 
-Use only basic markdown: numbered lists (1. 2. 3.) and bullet points (- item). Keep it simple and readable."""
+IMPORTANT: Use minimal formatting. Only use plain text with simple numbered lists (1. 2. 3.) or bullet points (- item).
+Do NOT use: asterisks for bold/italic, backticks for code, multiple line breaks, or any other markdown symbols.
+Keep it clean and readable."""
         
         response = client.chat.completions.create(
             model="gpt-4o-mini",

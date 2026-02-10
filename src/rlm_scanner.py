@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 
 # Import existing Contextify infrastructure
 from pipeline import ContextifyPipeline
-from graph_builder import GraphBuilder
+from graph_builder import GraphBuilder, LANGUAGE_EXTENSIONS
 from api.graph_api import GraphAPI
 
 # Load environment variables
@@ -29,14 +29,18 @@ load_dotenv()
 
 # Simple and direct system prompt
 ENHANCED_SYSTEM_PROMPT = """
-Analyze Python files for issues. Return ONLY the JSON array, no explanations.
+Analyze source code files for issues. Return ONLY the JSON array, no explanations.
 
 Input: context["files"] (dict of filepath: code)
+Files may be in any programming language (Python, JavaScript, TypeScript, Java, C/C++, Go, Rust, Ruby, PHP, Swift, etc.)
 
 Task: Use llm_query_batched to analyze files, then output ONLY the JSON array.
 
+IMPORTANT: Empty files or files with only comments/whitespace should have severity "none".
+Do NOT classify empty files as problematic.
+
 Severity levels (use ONLY these exact strings):
-- "none"     — No issues found in the file
+- "none"     — No issues found OR file is empty/minimal
 - "low"      — Minor style or cosmetic issues
 - "medium"   — Potential bugs or moderate code smells
 - "high"     — Likely bugs, security risks, or serious design flaws
@@ -56,6 +60,9 @@ for fpath, code in files.items():
 Use ONLY these severities: "none", "low", "medium", "high", "critical".
 If unsure about the description, use "Manual review recommended".
 
+IMPORTANT: The "file" field must be EXACTLY: {safe_path}
+Do NOT use class names, function names, or invented paths.
+
 Example format:
 [{{"file":"{safe_path}","severity":"high","description":"5 words max"}}]
 
@@ -65,7 +72,12 @@ JSON array only.\'\'\')
 
 responses = llm_query_batched(prompts)
 
+# Create set of valid file paths for filtering
+valid_files = set(fpath.replace('\\\\', '/') for fpath in files.keys())
+
 all_issues = []
+files_with_issues = set()
+
 for resp in responses:
     try:
         cleaned = str(resp).strip()
@@ -74,9 +86,25 @@ for resp in responses:
         cleaned = cleaned.replace('\\\\\\\\', '/')
         issues = json.loads(cleaned)
         if isinstance(issues, list):
-            all_issues.extend(issues)
+            # Filter out invalid files (hallucinations, class names, etc.)
+            for issue in issues:
+                if isinstance(issue, dict):
+                    file_path = issue.get('file', '').replace('\\\\', '/')
+                    # Only include if it matches a real file from our input
+                    if file_path in valid_files:
+                        all_issues.append(issue)
+                        files_with_issues.add(file_path)
     except:
         pass
+
+# Add "none" severity for files that were analyzed but had no issues returned
+for fpath in valid_files:
+    if fpath not in files_with_issues:
+        all_issues.append({
+            "file": fpath,
+            "severity": "none",
+            "description": "No issues found"
+        })
 
 print(json.dumps(all_issues))
 ```
@@ -151,13 +179,13 @@ class EnhancedRLMScanner:
     # Removed: parse_github_url and clone_github_repo
     # Now using existing infrastructure from github_fetch.py and pipeline.py
 
-    def collect_python_files(
+    def collect_source_files(
         self,
         directory: str,
         exclude_patterns: List[str] = None
     ) -> Dict[str, str]:
         """
-        Collect all Python files in a directory.
+        Collect all supported source files in a directory.
 
         Args:
             directory: Root directory to scan
@@ -178,21 +206,37 @@ class EnhancedRLMScanner:
                 "build",
                 "dist",
                 ".eggs",
+                "target",  # Rust/Java build dir
+                "bin",     # Binary dirs
+                "obj",     # C# build dir
             ]
 
         files = {}
-        root_path = Path(directory)
+        root_path = Path(directory).resolve()  # Get absolute path
 
         print(f"\n[COLLECTING FILES]")
         print(f"Scanning directory: {directory}")
-        
+        print(f"Resolved absolute path: {root_path}")
+        print(f"Directory exists: {root_path.exists()}")
+        print(f"Supported extensions: {', '.join(sorted(LANGUAGE_EXTENSIONS.keys()))}")
+
         self._notify_progress("collecting_started", {"directory": directory})
 
-        for py_file in root_path.rglob("*.py"):
+        # Get all supported extensions from LANGUAGE_EXTENSIONS
+        supported_extensions = set(LANGUAGE_EXTENSIONS.keys())
+
+        for source_file in root_path.rglob("*"):
+            if not source_file.is_file():
+                continue
+
+            # Check if file has a supported extension
+            if source_file.suffix not in supported_extensions:
+                continue
+
             # Check exclusions
             should_exclude = False
             for pattern in exclude_patterns:
-                if pattern in str(py_file):
+                if pattern in str(source_file):
                     should_exclude = True
                     break
 
@@ -200,14 +244,16 @@ class EnhancedRLMScanner:
                 continue
 
             # Make path relative to root
-            relative_path = py_file.relative_to(root_path)
+            relative_path = source_file.relative_to(root_path)
 
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(source_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                     files[str(relative_path)] = content
-                    print(f"  [+] {relative_path} ({len(content)} chars)")
-                    self._notify_progress("file_collected", {"file": str(relative_path)})
+                    lang = LANGUAGE_EXTENSIONS[source_file.suffix]
+                    print(f"  [+] {relative_path} ({len(content)} chars, {lang})")
+                    print(f"      Full path: {source_file}")
+                    self._notify_progress("file_collected", {"file": str(relative_path), "language": lang})
             except Exception as e:
                 print(f"  [!] Failed to read {relative_path}: {e}")
 
@@ -282,27 +328,27 @@ class EnhancedRLMScanner:
             # (The original graph might exist with different path structure)
             if stats['nodes'] == 0:
                 print("\n[WARNING] Graph rebuild found 0 nodes - path might be incorrect")
-                print(f"          Attempting to collect Python files anyway from: {directory}")
+                print(f"          Attempting to collect source files anyway from: {directory}")
 
-        # Collect Python files for RLM analysis
-        print("\n[COLLECTING PYTHON FILES]")
+        # Collect source files for RLM analysis
+        print("\n[COLLECTING SOURCE FILES]")
         self._notify_progress("collecting_files", {
             "repo_name": repo_name,
-            "status": "Collecting Python files..."
+            "status": "Collecting source files..."
         })
 
-        files = self.collect_python_files(directory)
+        files = self.collect_source_files(directory)
 
-        print(f"Collected {len(files)} Python files")
+        print(f"Collected {len(files)} source files")
         self._notify_progress("files_collected", {
             "repo_name": repo_name,
             "file_count": len(files)
         })
 
         if not files:
-            print("\n[WARNING] No Python files found for RLM analysis!")
-            
-            # If both graph has 0 nodes AND no Python files, return error
+            print("\n[WARNING] No source files found for RLM analysis!")
+
+            # If both graph has 0 nodes AND no source files, return error
             if stats['nodes'] == 0:
                 print("[ERROR] No source files found at all - check repository path")
                 return {
@@ -311,13 +357,13 @@ class EnhancedRLMScanner:
                     "files_analyzed": 0,
                     "issues_found": 0
                 }
-            
-            print("(Graph was built with other languages, but no Python files to analyze)")
+
+            print("(Graph was built, but no analyzable source files found)")
             return {
                 "files_analyzed": 0,
                 "issues_found": 0,
                 "execution_time": 0,
-                "message": "No Python files found for RLM analysis"
+                "message": "No source files found for RLM analysis"
             }
 
         # Convert graph to JSON format for RLM context

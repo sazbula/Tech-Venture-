@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useNavigate } from "react-router-dom";
 import AppHeader from "@/components/layout/AppHeader";
-import { analyzeRepo, analyzeLocalRepo } from "@/services/api";
+import { analyzeRepo } from "@/services/api";
 
 const steps = [
   { label: "Cloning", description: "Fetching repository..." },
@@ -24,63 +24,10 @@ const RepoImport = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [statusText, setStatusText] = useState("");
-  const [repoName, setRepoName] = useState("");
   const analysisStarted = useRef(false);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   const isValidUrl = url.match(/^(https?:\/\/)?(www\.)?github\.com\/.+\/.+/);
-
-  const loadDemoRepo = () => {
-    // Load the existing demo repo directly without analyzing
-    localStorage.setItem("currentRepo", "demo_repo");
-    localStorage.setItem("rlmInProgress", "false");
-    navigate("/dashboard");
-  };
-
-  const startLiveDemoAnalysis = async () => {
-    // Run live analysis on demo_repo
-    if (analysisStarted.current) return;
-    analysisStarted.current = true;
-
-    setAnalyzing(true);
-    setCurrentStep(0);
-    setProgress(10);
-    setError(null);
-    setStatusText("Connecting to analysis stream...");
-    setRepoName("demo_repo");
-
-    try {
-      // Connect to SSE first and wait for connection to establish
-      const sseReady = new Promise<void>((resolve) => {
-        connectSSE("demo_repo", () => {
-          setStatusText("Starting live demo analysis...");
-          resolve();
-        });
-      });
-
-      // Wait for SSE to be ready before triggering analysis
-      await sseReady;
-
-      // Small delay to ensure SSE connection is fully established
-      await new Promise(resolve => setTimeout(resolve, 200));
-
-      // Trigger local repo analysis - events will now be captured
-      await analyzeLocalRepo("demo_repo", false, true);
-
-      // Navigation happens when batch_start event fires
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Analysis failed");
-      setAnalyzing(false);
-      setCurrentStep(-1);
-      setProgress(0);
-      analysisStarted.current = false;
-
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-        eventSourceRef.current = null;
-      }
-    }
-  };
 
   const connectSSE = (repoName: string, onConnected?: () => void) => {
     // Close existing connection
@@ -118,8 +65,8 @@ const RepoImport = () => {
             setStatusText(`Graph built: ${data.nodes} nodes, ${data.edges} edges`);
 
             // Navigate to dashboard immediately - graph is ready to display
-            const currentRepoName = repoName || (url ? url.split('/').pop()?.replace('.git', '') : '') || '';
-            localStorage.setItem("currentRepo", currentRepoName);
+            const currentRepoName = url ? url.split('/').pop()?.replace('.git', '') : '';
+            localStorage.setItem("currentRepo", currentRepoName || '');
             localStorage.setItem("rlmInProgress", "true");
             setTimeout(() => {
               navigate("/dashboard");
@@ -276,22 +223,12 @@ const RepoImport = () => {
               </p>
 
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Input
-                    placeholder="https://github.com/org/repo"
-                    value={url}
-                    onChange={e => setUrl(e.target.value)}
-                    className="h-12 font-mono"
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    onClick={startLiveDemoAnalysis}
-                  >
-                    Load Demo Repository
-                  </Button>
-                </div>
+                <Input
+                  placeholder="https://github.com/org/repo"
+                  value={url}
+                  onChange={e => setUrl(e.target.value)}
+                  className="h-12 font-mono"
+                />
 
                 <div className="flex items-center justify-between p-3 rounded-lg bg-card border border-border">
                   <div className="flex items-center gap-2">

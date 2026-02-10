@@ -1,72 +1,53 @@
 {
   "issues_by_file": {
-    "authenticate_user function": [
+    "src/auth.py": [
       {
-        "file": "authenticate_user function",
-        "severity": "high",
-        "description": "Hardcoded credentials"
-      }
-    ],
-    "hash_password function": [
-      {
-        "file": "hash_password function",
+        "file": "src/auth.py",
         "severity": "critical",
-        "description": "Weak hash function"
-      }
-    ],
-    "Session class": [
+        "description": "Hardcoded credentials"
+      },
       {
-        "file": "Session class",
-        "severity": "low",
+        "file": "src/auth.py",
+        "severity": "high",
+        "description": "Weak hash function"
+      },
+      {
+        "file": "src/auth.py",
+        "severity": "none",
         "description": "Manual review recommended"
       }
     ],
-    "database.py": [
+    "src/database.py": [
       {
-        "file": "database.py",
+        "file": "src/database.py",
         "severity": "high",
         "description": "SQL injection risk"
       },
       {
-        "file": "database.py",
-        "severity": "high",
-        "description": "SQL injection risk"
-      },
-      {
-        "file": "database.py",
-        "severity": "high",
-        "description": "SQL injection risk"
+        "file": "src/database.py",
+        "severity": "medium",
+        "description": "Incomplete function"
       }
     ],
-    "utility_helpers.py": [
+    "utils/helpers.py": [
       {
-        "file": "utility_helpers.py",
+        "file": "utils/helpers.py",
         "severity": "high",
-        "description": "No zero division check"
+        "description": "Divide by zero"
       },
       {
-        "file": "utility_helpers.py",
+        "file": "utils/helpers.py",
         "severity": "medium",
-        "description": "No error handling"
-      },
-      {
-        "file": "utility_helpers.py",
-        "severity": "low",
-        "description": "Inefficient iteration"
-      },
-      {
-        "file": "utility_helpers.py",
-        "severity": "medium",
-        "description": "No input validation"
+        "description": "Manual review recommended"
       }
     ]
   },
   "summary": {
     "total_files": 3,
-    "files_with_issues": 5,
-    "total_issues": 10,
+    "files_with_issues": 3,
+    "total_issues": 7,
     "critical_issues": 1,
-    "high_issues": 5,
+    "high_issues": 3,
     "batches_completed": 1,
     "total_batches": 1
   }

@@ -3,85 +3,144 @@
     "url_shortener/asgi.py": [
       {
         "file": "url_shortener/asgi.py",
-        "severity": "medium",
-        "description": "Invalid Django version"
+        "severity": "none",
+        "description": "Manual review recommended"
       }
     ],
     "url_shortener/settings.py": [
       {
         "file": "url_shortener/settings.py",
         "severity": "critical",
-        "description": "SECRET_KEY exposed"
+        "description": "Hardcoded secret key"
       },
       {
         "file": "url_shortener/settings.py",
         "severity": "high",
-        "description": "Debug true in prod"
+        "description": "Debug true in production"
       },
       {
         "file": "url_shortener/settings.py",
         "severity": "medium",
-        "description": "Add host validation"
+        "description": "Allowed hosts wildcard"
       },
       {
         "file": "url_shortener/settings.py",
         "severity": "medium",
-        "description": "Sensitive env vars use"
+        "description": "Staticfiles storage issue"
       },
       {
         "file": "url_shortener/settings.py",
         "severity": "medium",
-        "description": "Manual review recommended"
+        "description": "Database credentials from env"
       }
     ],
     "url_shortener/wsgi.py": [
       {
         "file": "url_shortener/wsgi.py",
         "severity": "medium",
-        "description": "Unsupported Django version"
+        "description": "Unknown Django version"
+      },
+      {
+        "file": "url_shortener/wsgi.py",
+        "severity": "medium",
+        "description": "Manual review recommended"
       }
     ],
-    "models.py": [
+    "url_shortener_website/middleware.py": [
       {
-        "file": "models.py",
+        "file": "url_shortener_website/middleware.py",
         "severity": "medium",
-        "description": "CharField max_length missing"
-      },
+        "description": "Path info leakage"
+      }
+    ],
+    "url_shortener_website/admin.py": [
       {
-        "file": "models.py",
-        "severity": "medium",
-        "description": "CharField max_length missing"
-      },
-      {
-        "file": "models.py",
-        "severity": "medium",
-        "description": "Weak password storage"
-      },
-      {
-        "file": "models.py",
+        "file": "url_shortener_website/admin.py",
         "severity": "none",
-        "description": "Manual review recommended"
+        "description": "No issues found"
+      }
+    ],
+    "monitoring/prometheus/prometheus.yml": [
+      {
+        "file": "monitoring/prometheus/prometheus.yml",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "url_shortener/urls.py": [
+      {
+        "file": "url_shortener/urls.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "url_shortener/__init__.py": [
+      {
+        "file": "url_shortener/__init__.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "manage.py": [
+      {
+        "file": "manage.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "url_shortener_website/apps.py": [
+      {
+        "file": "url_shortener_website/apps.py",
+        "severity": "none",
+        "description": "No issues found"
+      }
+    ],
+    "url_shortener_website/models.py": [
+      {
+        "file": "url_shortener_website/models.py",
+        "severity": "medium",
+        "description": "Shortcode max length undefined"
+      },
+      {
+        "file": "url_shortener_website/models.py",
+        "severity": "medium",
+        "description": "Original_url max length undefined"
+      },
+      {
+        "file": "url_shortener_website/models.py",
+        "severity": "medium",
+        "description": "Email length constraint missing"
+      },
+      {
+        "file": "url_shortener_website/models.py",
+        "severity": "high",
+        "description": "Email validation missing"
+      },
+      {
+        "file": "url_shortener_website/models.py",
+        "severity": "critical",
+        "description": "Password storage insecure"
+      },
+      {
+        "file": "url_shortener_website/models.py",
+        "severity": "medium",
+        "description": "Add related_name to ForeignKey"
       }
     ],
     "url_shortener_website/urls.py": [
       {
         "file": "url_shortener_website/urls.py",
-        "severity": "high",
-        "description": "Wildcard imports used"
-      },
-      {
-        "file": "url_shortener_website/urls.py",
         "severity": "medium",
-        "description": "Inconsistent path endings"
-      },
-      {
-        "file": "url_shortener_website/urls.py",
-        "severity": "medium",
-        "description": "Duplicate URL patterns may overlap"
+        "description": "Wildcard import used"
       },
       {
         "file": "url_shortener_website/urls.py",
         "severity": "low",
+        "description": "Missing trailing slash"
+      },
+      {
+        "file": "url_shortener_website/urls.py",
+        "severity": "medium",
         "description": "Manual review recommended"
       }
     ],
@@ -89,235 +148,246 @@
       {
         "file": "url_shortener_website/views.py",
         "severity": "medium",
-        "description": "Template path issue"
+        "description": "Path traversal risk"
+      },
+      {
+        "file": "url_shortener_website/views.py",
+        "severity": "high",
+        "description": "Improper message use"
       },
       {
         "file": "url_shortener_website/views.py",
         "severity": "medium",
-        "description": "Messages storage logic flawed"
+        "description": "Potential XSS risk"
       },
       {
         "file": "url_shortener_website/views.py",
-        "severity": "medium",
-        "description": "Incorrect favicon handling"
+        "severity": "none",
+        "description": ""
       },
       {
         "file": "url_shortener_website/views.py",
         "severity": "low",
-        "description": "Hardcoded redirect path"
+        "description": "Use const TEMPLATE_PATH"
+      },
+      {
+        "file": "url_shortener_website/views.py",
+        "severity": "critical",
+        "description": "Session fixation risk"
       },
       {
         "file": "url_shortener_website/views.py",
         "severity": "medium",
-        "description": "Render function misuse"
+        "description": "Manual review recommended"
+      },
+      {
+        "file": "url_shortener_website/views.py",
+        "severity": "medium",
+        "description": "Unauth access risk"
       }
     ],
-    "api/views.py": [
+    "url_shortener_website/api/views.py": [
       {
-        "file": "api/views.py",
-        "severity": "medium",
-        "description": "Env variable default"
-      },
-      {
-        "file": "api/views.py",
-        "severity": "medium",
-        "description": "Hardcoded localhost"
-      },
-      {
-        "file": "api/views.py",
+        "file": "url_shortener_website/api/views.py",
         "severity": "high",
-        "description": "POST no CSRF"
+        "description": "Hardcoded BASE_URL"
       },
       {
-        "file": "api/views.py",
+        "file": "url_shortener_website/api/views.py",
         "severity": "medium",
-        "description": "POST for idempotent op"
+        "description": "Potential CSRF in POST"
       },
       {
-        "file": "api/views.py",
+        "file": "url_shortener_website/api/views.py",
         "severity": "medium",
-        "description": "No error logging"
+        "description": "No rate limiting"
       },
       {
-        "file": "api/views.py",
+        "file": "url_shortener_website/api/views.py",
         "severity": "medium",
-        "description": "Default success msg"
+        "description": "Session handling risk"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "medium",
+        "description": "Error not logged"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "medium",
+        "description": "Plain print statements"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "medium",
+        "description": "Email validation logic"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "medium",
+        "description": "URL validation logic"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "medium",
+        "description": "No HTTPS enforcement"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "low",
+        "description": "Redundant URL check"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "low",
+        "description": "Redundant email check"
+      },
+      {
+        "file": "url_shortener_website/api/views.py",
+        "severity": "low",
+        "description": "Duplicate success responses"
       }
     ],
     "url_shortener_website/migrations/0001_initial.py": [
       {
         "file": "url_shortener_website/migrations/0001_initial.py",
-        "severity": "high",
-        "description": "Missing max_length"
-      },
-      {
-        "file": "url_shortener_website/migrations/0001_initial.py",
-        "severity": "low",
-        "description": "PositiveIntegerField recommended"
+        "severity": "medium",
+        "description": "CharField missing max_length"
       }
     ],
     "url_shortener_website/migrations/0002_remove_urlmapping_shortcode_urlmapping_id_and_more.py": [
       {
         "file": "url_shortener_website/migrations/0002_remove_urlmapping_shortcode_urlmapping_id_and_more.py",
-        "severity": "medium",
-        "description": "BigIntegerField default"
+        "severity": "high",
+        "description": "Default value 1"
+      },
+      {
+        "file": "url_shortener_website/migrations/0002_remove_urlmapping_shortcode_urlmapping_id_and_more.py",
+        "severity": "high",
+        "description": "Default value 'a'"
       },
       {
         "file": "url_shortener_website/migrations/0002_remove_urlmapping_shortcode_urlmapping_id_and_more.py",
         "severity": "medium",
-        "description": "CharField default"
+        "description": "Manual review recommended"
       }
     ],
     "url_shortener_website/migrations/0005_alter_urlmapping_original_url.py": [
       {
         "file": "url_shortener_website/migrations/0005_alter_urlmapping_original_url.py",
         "severity": "medium",
-        "description": "CharField max_length missing"
+        "description": "Add max_length to CharField"
       }
     ],
-    "url_shortener_website/migrations/0006_useraccount_userurlmapping.py": [
+    "url_shortener_website/migrations/0003_alter_urlmapping_id.py": [
       {
-        "file": "url_shortener_website/migrations/0006_useraccount_userurlmapping.py",
-        "severity": "high",
-        "description": "email lacks max length"
-      },
-      {
-        "file": "url_shortener_website/migrations/0006_useraccount_userurlmapping.py",
-        "severity": "high",
-        "description": "password lacks max length"
+        "file": "url_shortener_website/migrations/0003_alter_urlmapping_id.py",
+        "severity": "none",
+        "description": "No issues found"
       }
     ],
-    "class ApiViewsTests": [
+    "url_shortener_website/__init__.py": [
       {
-        "file": "class ApiViewsTests",
-        "severity": "medium",
-        "description": "Session ID not checked"
+        "file": "url_shortener_website/__init__.py",
+        "severity": "none",
+        "description": "No issues found"
       }
     ],
-    "function _create_user": [
+    "url_shortener_website/migrations/0004_rename_short_url_urlmapping_shortcode.py": [
       {
-        "file": "function _create_user",
-        "severity": "medium",
-        "description": "Password hashing manual"
-      }
-    ],
-    "test_login_success_sets_session": [
-      {
-        "file": "test_login_success_sets_session",
-        "severity": "low",
-        "description": "Session manual review recommended"
-      }
-    ],
-    "test_logout_clears_session": [
-      {
-        "file": "test_logout_clears_session",
-        "severity": "medium",
-        "description": "State verification missing"
-      }
-    ],
-    "<unknown>": [
-      {
-        "file": "<unknown>",
-        "severity": "medium",
-        "description": "Session handling"
-      },
-      {
-        "file": "<unknown>",
-        "severity": "medium",
-        "description": "Hardcoded URLs"
-      },
-      {
-        "file": "<unknown>",
-        "severity": "high",
-        "description": "No mock database"
-      },
-      {
-        "file": "<unknown>",
-        "severity": "medium",
-        "description": "Password plain text"
-      },
-      {
-        "file": "<unknown>",
-        "severity": "medium",
-        "description": "User existence check"
-      },
-      {
-        "file": "<unknown>",
-        "severity": "medium",
-        "description": "Session as dict"
-      },
-      {
-        "file": "<unknown>",
-        "severity": "medium",
-        "description": "No error handling"
+        "file": "url_shortener_website/migrations/0004_rename_short_url_urlmapping_shortcode.py",
+        "severity": "none",
+        "description": "No issues found"
       }
     ],
     "url_shortener_website/tests/test_session_manager.py": [
       {
         "file": "url_shortener_website/tests/test_session_manager.py",
-        "severity": "low",
-        "description": "Improve test coverage"
-      }
-    ],
-    "test_url_fetcher.py": [
-      {
-        "file": "test_url_fetcher.py",
-        "severity": "low",
-        "description": "Superfluous SimpleTestCase import"
-      },
-      {
-        "file": "test_url_fetcher.py",
-        "severity": "low",
-        "description": "MagicMock unused alias"
-      },
-      {
-        "file": "test_url_fetcher.py",
-        "severity": "medium",
-        "description": "No error handling"
-      },
-      {
-        "file": "test_url_fetcher.py",
-        "severity": "medium",
-        "description": "Hardcoded URL in assertions"
-      },
-      {
-        "file": "test_url_fetcher.py",
-        "severity": "low",
-        "description": "Test coverage may be low"
-      }
-    ],
-    "<input>": [
-      {
-        "file": "<input>",
-        "severity": "low",
-        "description": "Duplicate test method names"
-      },
-      {
-        "file": "<input>",
-        "severity": "medium",
-        "description": "Uses MagicMock unnecessarily"
-      },
-      {
-        "file": "<input>",
-        "severity": "medium",
-        "description": "Flushing session not realistic"
-      },
-      {
-        "file": "<input>",
         "severity": "none",
-        "description": "Unnecessary setUp classes"
+        "description": "No significant issues"
+      }
+    ],
+    "url_shortener_website/tests/test_url_fetcher.py": [
+      {
+        "file": "url_shortener_website/tests/test_url_fetcher.py",
+        "severity": "high",
+        "description": "Test using production URL"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_fetcher.py",
+        "severity": "low",
+        "description": "MagicMock overuse"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_fetcher.py",
+        "severity": "medium",
+        "description": "Hardcoded URL"
+      }
+    ],
+    "url_shortener_website/tests/test_url_repo.py": [
+      {
+        "file": "url_shortener_website/tests/test_url_repo.py",
+        "severity": "medium",
+        "description": "Hardcoded password"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_repo.py",
+        "severity": "medium",
+        "description": "Commented code"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_repo.py",
+        "severity": "medium",
+        "description": "Magic strings"
+      }
+    ],
+    "url_shortener_website/tests/test_url_service.py": [
+      {
+        "file": "url_shortener_website/tests/test_url_service.py",
+        "severity": "medium",
+        "description": "Duplicate test name"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_service.py",
+        "severity": "low",
+        "description": "Ineffective test coverage"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_service.py",
+        "severity": "medium",
+        "description": "Unmocked database operations"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_service.py",
+        "severity": "low",
+        "description": "Potential session issues"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_service.py",
+        "severity": "medium",
+        "description": "MagicMock misuse"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_service.py",
+        "severity": "low",
+        "description": "Manual review recommended"
+      },
+      {
+        "file": "url_shortener_website/tests/test_url_service.py",
+        "severity": "medium",
+        "description": "Hardcoded URLs"
       }
     ],
     "url_shortener_website/tests/test_user_repository.py": [
       {
         "file": "url_shortener_website/tests/test_user_repository.py",
-        "severity": "high",
-        "description": "Wrong method call"
+        "severity": "medium",
+        "description": "Method mismatch"
       },
       {
         "file": "url_shortener_website/tests/test_user_repository.py",
         "severity": "low",
-        "description": "Hardcoded email used"
+        "description": "Manual review recommended"
       }
     ],
     "url_shortener_website/tests/test_user_service.py": [
@@ -327,155 +397,66 @@
         "description": "Manual review recommended"
       }
     ],
+    "url_shortener_website/tests/test_user_url_mapping_repository.py": [
+      {
+        "file": "url_shortener_website/tests/test_user_url_mapping_repository.py",
+        "severity": "medium",
+        "description": "Hardcoded credentials"
+      },
+      {
+        "file": "url_shortener_website/tests/test_user_url_mapping_repository.py",
+        "severity": "low",
+        "description": "Password handling"
+      }
+    ],
     "url_shortener_website/tests/test_validation_service.py": [
       {
         "file": "url_shortener_website/tests/test_validation_service.py",
         "severity": "medium",
-        "description": "Mock objects not used"
+        "description": "Testing private method"
+      },
+      {
+        "file": "url_shortener_website/tests/test_validation_service.py",
+        "severity": "medium",
+        "description": "Use of SimpleTestCase"
       },
       {
         "file": "url_shortener_website/tests/test_validation_service.py",
         "severity": "medium",
         "description": "Manual review recommended"
-      }
-    ],
-    "code.py": [
-      {
-        "file": "code.py",
-        "severity": "medium",
-        "description": "Unused imports"
-      },
-      {
-        "file": "code.py",
-        "severity": "low",
-        "description": "Variable shadowing"
-      },
-      {
-        "file": "code.py",
-        "severity": "high",
-        "description": "Potential security issue"
-      },
-      {
-        "file": "code.py",
-        "severity": "medium",
-        "description": "Unoptimized code"
-      },
-      {
-        "file": "code.py",
-        "severity": "medium",
-        "description": "Hardcoded values"
       }
     ],
     "url_shortener_website/utils/mapping_creation_service.py": [
       {
         "file": "url_shortener_website/utils/mapping_creation_service.py",
         "severity": "medium",
-        "description": "Environment not validated"
+        "description": "Environment config"
       },
       {
         "file": "url_shortener_website/utils/mapping_creation_service.py",
         "severity": "medium",
-        "description": "Exception not specific"
-      },
-      {
-        "file": "url_shortener_website/utils/mapping_creation_service.py",
-        "severity": "medium",
-        "description": "HTTP scheme hardcoded"
+        "description": "Exception handling"
       },
       {
         "file": "url_shortener_website/utils/mapping_creation_service.py",
         "severity": "low",
-        "description": "Manual review recommended"
+        "description": "Hardcoded URL"
       }
     ],
-    "url_shortener_website/utils/url_repository.py": [
+    "url_shortener_website/tests/__init__.py": [
       {
-        "file": "url_shortener_website/utils/url_repository.py",
-        "severity": "low",
-        "description": "inconsistent return values"
-      },
-      {
-        "file": "url_shortener_website/utils/url_repository.py",
-        "severity": "medium",
-        "description": "print statement in production code"
-      },
-      {
-        "file": "url_shortener_website/utils/url_repository.py",
-        "severity": "medium",
-        "description": "Manual review recommended"
-      }
-    ],
-    "url_shortener_website/utils/url_service.py": [
-      {
-        "file": "url_shortener_website/utils/url_service.py",
-        "severity": "medium",
-        "description": "Environment handling"
-      },
-      {
-        "file": "url_shortener_website/utils/url_service.py",
-        "severity": "high",
-        "description": "HTTP/HTTPS logic error"
-      },
-      {
-        "file": "url_shortener_website/utils/url_service.py",
-        "severity": "medium",
-        "description": "Base class use"
-      }
-    ],
-    "url_shortener_website/utils/user_repository.py": [
-      {
-        "file": "url_shortener_website/utils/user_repository.py",
-        "severity": "medium",
-        "description": "Password stored in plaintext"
-      },
-      {
-        "file": "url_shortener_website/utils/user_repository.py",
-        "severity": "low",
-        "description": "Potential method chaining use"
-      }
-    ],
-    "example_path/module1.py": [
-      {
-        "file": "example_path/module1.py",
-        "severity": "medium",
-        "description": "Potential division by zero"
-      }
-    ],
-    "example_path/module2.py": [
-      {
-        "file": "example_path/module2.py",
-        "severity": "low",
-        "description": "Unused import statement"
-      }
-    ],
-    "example_path/module3.py": [
-      {
-        "file": "example_path/module3.py",
-        "severity": "high",
-        "description": "SQL injection risk"
-      }
-    ],
-    "example_path/module4.py": [
-      {
-        "file": "example_path/module4.py",
-        "severity": "critical",
-        "description": "Buffer overflow vulnerability"
-      }
-    ],
-    "example_path/module5.py": [
-      {
-        "file": "example_path/module5.py",
+        "file": "url_shortener_website/tests/__init__.py",
         "severity": "none",
-        "description": ""
+        "description": "No issues found"
       }
     ]
   },
   "summary": {
-    "total_files": 44,
-    "files_with_issues": 32,
-    "total_issues": 81,
-    "critical_issues": 2,
-    "high_issues": 11,
+    "total_files": 49,
+    "files_with_issues": 30,
+    "total_issues": 78,
+    "critical_issues": 3,
+    "high_issues": 7,
     "batches_completed": 5,
     "total_batches": 5
   }

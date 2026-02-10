@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Search,
   GitBranch,
@@ -39,6 +40,12 @@ const DashboardSidebar = ({
   onSearchChange,
 }: DashboardSidebarProps) => {
   const navigate = useNavigate();
+  const [repoName, setRepoName] = useState<string>("Demo");
+
+  useEffect(() => {
+    const currentRepo = localStorage.getItem("currentRepo");
+    setRepoName(currentRepo || "Demo");
+  }, []);
 
   const handleTabClick = (id: string) => {
     if (id === "findings") {
@@ -52,11 +59,10 @@ const DashboardSidebar = ({
     <aside className="w-60 border-r border-border bg-card flex flex-col shrink-0">
       {/* Repo info */}
       <div className="p-4 border-b border-border">
-
         <div className="flex items-center gap-2 mb-2">
           <GitBranch className="w-3.5 h-3.5 text-primary" />
           <span className="text-sm font-medium font-mono truncate">
-            acme/backend-api
+            {repoName}
           </span>
         </div>
 

@@ -78,7 +78,7 @@ const Dashboard = () => {
           id: n.id,
           path: n.path,
           folder: n.folder,
-          severity: n.severity === "gray" ? "green" : n.severity,
+          severity: n.severity,
           issues: n.issues,
           topIssue: n.topIssue,
           size: n.size,
@@ -178,12 +178,14 @@ const Dashboard = () => {
 
         // Update node colors based on batch_complete events
         if (data.type === "batch_complete" && data.issues_by_file) {
+          console.log("Batch complete - updating nodes with issues:", data.issues_by_file);
           setNodes(prevNodes => {
-            return prevNodes.map(node => {
+            const updatedNodes = prevNodes.map(node => {
               const normalizedNodePath = node.path.replace(/\\/g, '/');
               const fileIssues = data.issues_by_file[normalizedNodePath];
 
               if (fileIssues && fileIssues.length > 0) {
+                console.log(`Updating node ${normalizedNodePath}: ${fileIssues.length} issues, severity will be ${getSeverityFromIssues(fileIssues)}`);
                 return {
                   ...node,
                   severity: getSeverityFromIssues(fileIssues),
@@ -194,6 +196,8 @@ const Dashboard = () => {
               // Don't mark as green yet - we don't know if this file was analyzed
               return node;
             });
+            console.log("Nodes after update:", updatedNodes.filter(n => n.issues > 0));
+            return updatedNodes;
           });
 
           setRlmProgress(prev => ({

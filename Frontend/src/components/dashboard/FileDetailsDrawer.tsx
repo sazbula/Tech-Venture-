@@ -140,7 +140,7 @@ const FileDetailsDrawer = ({ node, issues, onClose }: FileDetailsDrawerProps) =>
                node.severity === "yellow" ? "Low" :
                node.severity === "orange" ? "Medium" :
                node.severity === "red" ? "High" :
-               node.severity === "purple" ? "Critical" : "N/A"}
+               node.severity === "purple" ? "Critical" : "Analyzed"}
             </span>
           </div>
         </div>
@@ -149,12 +149,7 @@ const FileDetailsDrawer = ({ node, issues, onClose }: FileDetailsDrawerProps) =>
         <div className="flex-1 overflow-y-auto">
           {/* Issue list grouped by type */}
           <div className="p-4 space-y-4">
-            {issues.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">No issues found</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">This file looks clean ✓</p>
-              </div>
-            ) : (
+            {issues.length === 0 ? null : (
               Object.entries(issuesByType).map(([type, typeIssues]) => (
                 <div key={type}>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
@@ -169,9 +164,6 @@ const FileDetailsDrawer = ({ node, issues, onClose }: FileDetailsDrawerProps) =>
                           <span className={`w-2 h-2 rounded-full shrink-0 severity-dot-${issue.severity}`} />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm text-foreground">{issue.title}</p>
-                            <p className="text-xs text-muted-foreground font-mono mt-0.5">
-                              {issue.rule}
-                            </p>
                           </div>
                         </div>
 
